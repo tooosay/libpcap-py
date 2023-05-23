@@ -1,0 +1,52 @@
+lookupfunctions:
+
+pcap_lookupdev
+pcap_findalldevs
+pcap_lookupnet
+pcap_freealldevs
+
+pacetcapture functions:
+
+pcap_open_live
+pcap_open_dead
+pcap_next
+pcap_next_ex
+pcap_lookupdevpcap_dispatch
+pcap_setnonblock
+pcap_getnonblock
+pcap_set_datalink
+pcap_compile
+pcap_compile_nocap
+pcap_setfilter
+pcap_breakloop
+pcap_fileno
+pcap_close
+
+save and dump file functions:
+
+pcap_open_offline
+pcap_dump_open
+pcap_dump
+pcap_dump_close
+pcap_dump_flush
+pcap_major_version
+pcap_minor_version
+pcap_file
+pcap_is_swapped
+
+status functions:
+
+pcap_set_datalink
+pcap_list_datalinks
+pcap_snapshot
+pcap_stats 
+pcap_lib_version
+pcap_datalink_name_to_val
+pcap_datalink_val_to_name
+pcap_datalink_val_to_description
+
+error handling functions:
+
+pcap_geterr
+pcap_strerror
+pcap_perror
