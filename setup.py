@@ -1,11 +1,11 @@
 from distutils.core import setup, Extension
 
-module = Extension("pcap", 
+module = Extension("pppy", 
                    include_dirs = ["/usr/include","/usr/include/python3.10"],
                    libraries= ["pcap"],
                    sources=["pcap.c"])
 
-setup (name = "pcap",
+setup (name = "libpcap-py",
        version = "0.1.0",
        description = "libpcap python wrapper",
        author="tooosay",
