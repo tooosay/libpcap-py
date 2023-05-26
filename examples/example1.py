@@ -1,4 +1,4 @@
-import pcap as p
+import pppy as p
 import time
 
 filter_exp = "tcp"
