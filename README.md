@@ -30,7 +30,7 @@ python3 setup.py install
 </details>
 
 
-## :constructions:Supported Functions [29/74][39%]
+## :construction: Supported Functions [29/74][39%]
 - [ ] pcap_create
 - [ ] pcap_activate
 - [X] pcap_findalldevs
