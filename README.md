@@ -1,13 +1,13 @@
 # libpcap-py
-libpcap Python wrapper
+[libpcap](https://www.tcpdump.org/) Python biding
 
-## Prerequisite
+## :pray:Prerequisite
  * Python >= 3.10
  * libpcap >= 1.10
  
-## Installation
+## :running:Installation
 <details>
-<summary>self-build</summary>
+<summary>:muscle:self-build</summary>
 
 ##### step 1
 install followings
@@ -30,7 +30,7 @@ python3 setup.py install
 </details>
 
 
-## Supported Functions [29/74][39%]
+## :constructions:Supported Functions [29/74][39%]
 - [ ] pcap_create
 - [ ] pcap_activate
 - [X] pcap_findalldevs
@@ -105,6 +105,7 @@ python3 setup.py install
 - [X] pcap_geterr
 - [X] pcap_strerror
 - [X] pcap_perror
-### LICENSE
+
+## :oden:LICENSE
 [2-clause BSD License](https://opensource.org/license/bsd-2-clause/)
 
