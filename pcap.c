@@ -7,6 +7,7 @@
  */
 
 #define THIS_VERSION " python wrapper version 0.1.0"
+#define THIS_MODULE_NAME "libpcap-py"
 #define PY_SSIZE_T_CLEAN
 #include <python3.10/Python.h>
 #include <python3.10/structmember.h>
@@ -828,14 +829,14 @@ static PyMethodDef PcapMethods[] = {
 // module defeinition
 static PyModuleDef pcapmodule = {
     PyModuleDef_HEAD_INIT,
-    .m_name = "pcap",  // module name
+    .m_name = THIS_MODULE_NAME,  // module name
     .m_doc = "libpcap wrapper module", // module documentation
     .m_size = -1, // size of per-interpreter state of the module
     PcapMethods, // method table 
 };
 
 // pyinit
-PyMODINIT_FUNC PyInit_pcap(void) {
+PyMODINIT_FUNC PyInit_pppy(void) {
     // type initialization
     if (PyType_Ready(&PcapObjectType) < 0)
         return NULL;
