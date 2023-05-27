@@ -50,3 +50,8 @@ error handling functions:
 pcap_geterr
 pcap_strerror
 pcap_perror
+
+pcap setting functions:
+
+pcap_create
+pcap_activate

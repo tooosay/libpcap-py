@@ -785,6 +785,53 @@ static PyObject *pycap_perror(PyObject *self, PyObject *args){
     Py_RETURN_NAN;
 }
 
+/* pcap setting funcitons */
+
+// pcap_create
+static PyObject *pycap_create(PyObject *self, PyObject *args){
+    char errbuf[PCAP_ERRBUF_SIZE];
+    pcap_t *pcap;
+    const char *source = NULL;
+    if(!PyArg_ParseTuple(args, "|s", &source)){
+        return NULL;
+    }
+    pcap = pcap_create(source, errbuf);
+    if(pcap == NULL){
+        PyErr_SetString(PyExc_RuntimeError, errbuf);
+        return NULL;
+    }
+    return PcapObject_New(pcap);
+}
+// pcap_activate
+static PyObject *pycap_activate(PyObject *self, PyObject *args){
+    PcapObject *pcap_obj;
+    int result;
+    if(!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj)){
+        return NULL;
+    }
+    result = pcap_activate(pcap_obj->pcap);
+    if(result < 0){
+        PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
+        return NULL;
+    }
+    if(result > 0){
+        PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
+        return NULL;
+    }
+    if(Py_REFCNT(pcap_obj) > 1){
+        Py_INCREF(pcap_obj);
+        return (PyObject*) pcap_obj;
+    }
+    Py_RETURN_NONE;  
+}
+
+/* pcap set functions */
+// pcap_set_snaplen
+// pcap_set_promisc
+// pcap_set_protocol_linux
+// pcap_set_rfmon
+// pcap_set_timeout
+
 /* template */
 
 // enumerate function on method table
@@ -823,6 +870,9 @@ static PyMethodDef PcapMethods[] = {
     {"geterr", pycap_geterr, METH_VARARGS, "pcap_geterr wrapper"},
     {"strerror", pycap_strerror, METH_VARARGS, "pcap_strerror wrapper"},
     {"perror", pycap_perror, METH_VARARGS, "pcap_perror wrapper"},
+    /* pcap setting functions */
+    {"create", pycap_create, METH_VARARGS, "pcap_create wrapper"},
+    {"activate", pycap_activate, METH_VARARGS, "pcap_activate wrapper"},
     {NULL, NULL, 0, NULL}
 };
 
