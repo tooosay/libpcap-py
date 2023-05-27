@@ -1,5 +1,5 @@
 # libpcap-py
-[libpcap](https://www.tcpdump.org/) Python biding
+[libpcap](https://www.tcpdump.org/) Python binding
 
 ## :pray:Prerequisite
  * Python >= 3.10
