@@ -6,7 +6,7 @@
  * (c) 2023 Tooosay
  */
 
-#define THIS_VERSION " python wrapper version 0.2.0"
+#define THIS_VERSION " python wrapper version 0.3.0"
 #define THIS_MODULE_NAME "libpcap-py"
 #define PY_SSIZE_T_CLEAN
 #include <python3.10/Python.h>
