@@ -30,7 +30,7 @@ python3 setup.py install
 </details>
 
 
-## :construction: Supported Functions [31/74][41%]
+## :construction: Supported Functions [36/74][48%]
 - [X] pcap_create
 - [X] pcap_activate
 - [X] pcap_findalldevs
@@ -44,12 +44,12 @@ python3 setup.py install
 - [X] pcap_open_live
 - [X] pcap_open_dead
 - [X] pcap_close
-- [ ] pcap_set_snaplen
-- [ ] pcap_set_promisc
-- [ ] pcap_set_protocol_linux
-- [ ] pcap_set_rfmon
+- [X] pcap_set_snaplen
+- [X] pcap_set_promisc
+- [X] pcap_set_protocol_linux
+- [X] pcap_set_rfmon
 - [ ] pcap_can_set_rfmon
-- [ ] pcap_set_timeout
+- [X] pcap_set_timeout
 - [ ] pcap_set_immediate_mode
 - [ ] pcap_set_buffer_size
 - [ ] pcap_set_stapmp_type
