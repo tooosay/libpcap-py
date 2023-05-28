@@ -826,12 +826,92 @@ static PyObject *pycap_activate(PyObject *self, PyObject *args){
 }
 
 /* pcap set functions */
+// need to be refactored
 // pcap_set_snaplen
+static PyObject* pycap_set_snaplen(PyObject *self, PyObject *args){
+    int snaplen;
+    PcapObject *pcap_obj;
+    if(!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &snaplen)){
+        return NULL;
+    }
+    if(pcap_set_snaplen(pcap_obj->pcap, snaplen) != 0){
+        PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
+        return NULL;
+    }
+    if(Py_REFCNT(pcap_obj) > 1){
+        Py_INCREF(pcap_obj);
+        return (PyObject*) pcap_obj;
+    }
+    Py_RETURN_NONE;  
+}
 // pcap_set_promisc
+static PyObject* pycap_set_promisc(PyObject *self, PyObject *args){
+    int promisc;
+    PcapObject *pcap_obj;
+    if(!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &promisc)){
+        return NULL;
+    }
+    if(pcap_set_promisc(pcap_obj->pcap, promisc) != 0){
+        PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
+        return NULL;
+    }
+    if(Py_REFCNT(pcap_obj) > 1){
+        Py_INCREF(pcap_obj);
+        return (PyObject*) pcap_obj;
+    }
+    Py_RETURN_NONE;  
+}
 // pcap_set_protocol_linux
+static PyObject* pycap_set_protocol_linux(PyObject *self, PyObject *args){
+    int protocol;
+    PcapObject *pcap_obj;
+    if(!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &protocol)){
+        return NULL;
+    }
+    if(pcap_set_promisc(pcap_obj->pcap, protocol) != 0){
+        PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
+        return NULL;
+    }
+    if(Py_REFCNT(pcap_obj) > 1){
+        Py_INCREF(pcap_obj);
+        return (PyObject*) pcap_obj;
+    }
+    Py_RETURN_NONE;  
+}
 // pcap_set_rfmon
+static PyObject *pycap_set_rfmon(PyObject *self, PyObject *args){
+    int rfmon;
+    PcapObject *pcap_obj;
+    if(!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &rfmon)){
+        return NULL;
+    }
+    if(pcap_set_promisc(pcap_obj->pcap, rfmon) != 0){
+        PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
+        return NULL;
+    }
+    if(Py_REFCNT(pcap_obj) > 1){
+        Py_INCREF(pcap_obj);
+        return (PyObject*) pcap_obj;
+    }
+    Py_RETURN_NONE;  
+}
 // pcap_set_timeout
-
+static PyObject *pycap_set_timeout(PyObject *self, PyObject *args){
+    int timeout;
+    PcapObject *pcap_obj;
+    if(!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &timeout)){
+        return NULL;
+    }
+    if(pcap_set_promisc(pcap_obj->pcap, timeout) != 0){
+        PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
+        return NULL;
+    }
+    if(Py_REFCNT(pcap_obj) > 1){
+        Py_INCREF(pcap_obj);
+        return (PyObject*) pcap_obj;
+    }
+    Py_RETURN_NONE;  
+}
 /* template */
 
 // enumerate function on method table
@@ -873,6 +953,12 @@ static PyMethodDef PcapMethods[] = {
     /* pcap setting functions */
     {"create", pycap_create, METH_VARARGS, "pcap_create wrapper"},
     {"activate", pycap_activate, METH_VARARGS, "pcap_activate wrapper"},
+    /* pcap set functions */
+    {"set_snaplen", pycap_set_snaplen, METH_VARARGS, "pcap_set_snaplen wrapper"},
+    {"set_promisc", pycap_set_promisc, METH_VARARGS, "pcap_set_promisc wrapper"},
+    {"set_protocol_linux", pycap_set_protocol_linux, METH_VARARGS, "pcap_set_protocol_linux wrapper"},
+    {"set_rfmon", pycap_set_rfmon, METH_VARARGS, "pcap_set_rfmon wrapper"},
+    {"set_timeout", pycap_set_timeout, METH_VARARGS, "pcap_set_timeout wrapper"},
     {NULL, NULL, 0, NULL}
 };
 
