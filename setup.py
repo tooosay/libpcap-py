@@ -6,7 +6,7 @@ module = Extension("pppy",
                    sources=["pcap.c"])
 
 setup (name = "libpcap-py",
-       version = "0.2.0",
+       version = "0.3.0",
        description = "libpcap python wrapper",
        author="tooosay",
        url = "https://github.com/tooosay/libpcap-py",
