@@ -55,3 +55,11 @@ pcap setting functions:
 
 pcap_create
 pcap_activate
+
+pcap set functions:
+
+pcap_set_snaplen
+pcap_set_promisc
+pcap_set_protocol_linux
+pcap_set_rfmon
+pcap_set_timeout
