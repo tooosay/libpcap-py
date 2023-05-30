@@ -3,7 +3,7 @@
  * Author: Tooosay
  * Free to use, copy, modify, and distribute.
  * Distributed under the terms of BSD-2clause license
- * (c) 2023 Tooosay
+ * (c) 2023 Tooosay, All rights reserved.
  */
 
 #define THIS_VERSION " python wrapper version 0.3.0"
@@ -1021,4 +1021,9 @@ PyMODINIT_FUNC PyInit_pppy(void) {
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *
+ *
+ * This project uses libpcap(c) The Tcpdump Group, which is licensed under the BSD-3-Clause.
+ * 
  */
