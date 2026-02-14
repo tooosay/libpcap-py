@@ -3,7 +3,7 @@
 libpcap-py
 </h1>
 
-<img alt="Project Status" src="https://img.shields.io/badge/Status-Restructuring%20since%202026--02-yellow?style=for-the-badge">
+<a href="https://github.com/tooosay/libpcap-py/tree/modernize2026"> <img alt="Project Status" src="https://img.shields.io/badge/Status-Restructuring%20since%202026--02-yellow?style=for-the-badge"></a>
 
 </div>
 
