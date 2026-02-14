@@ -1,4 +1,18 @@
-# libpcap-py
+<div align="center">
+<h1>
+libpcap-py
+</h1>
+
+<img alt="Project Status" src="https://img.shields.io/badge/Status-Restructuring%20since%202026--02-yellow?style=for-the-badge">
+
+</div>
+
+#### Project status
+- Status: Modernizing (2026)
+- Current focus: pyproject.toml, flake, tests
+- Next: support python14 -> remaining todos
+
+## What's this?
 [libpcap](https://www.tcpdump.org/) Python binding
 
 ## :pray:Prerequisite
