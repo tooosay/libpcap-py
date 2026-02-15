@@ -41,7 +41,11 @@
               libpcap.lib
               uv
               ninja
+              pkg-config
+              stdenv.cc
             ];
+
+            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.libpcap ];
 
             shellHook = ''
               ${commonShellHook}
