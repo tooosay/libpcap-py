@@ -35,10 +35,12 @@
         in
         {
           devShells.default = pkgs.mkShell {
-            package = with pkgs; [
+            packages = with pkgs; [
               python310
               libpcap
+              libpcap.lib
               uv
+              ninja
             ];
 
             shellHook = ''
