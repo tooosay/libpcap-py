@@ -43,11 +43,17 @@
               ninja
               pkg-config
               stdenv.cc
+              just
             ];
 
             LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.libpcap ];
 
+            UV_NO_EDITABLE = 1;
+            UV_NO_CACHE = 1;
+            UV_PROJECT_ENVIRONMENT = ".venv";
+
             shellHook = ''
+              echo ${pkgs.python310.version} > .python-version
               ${commonShellHook}
             '';
           };
