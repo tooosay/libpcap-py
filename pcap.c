@@ -7,7 +7,7 @@
  */
 
 #define THIS_VERSION " python wrapper version 0.3.0"
-#define THIS_MODULE_NAME "libpcap-py"
+#define THIS_MODULE_NAME "pppy"
 #define PY_SSIZE_T_CLEAN
 #include <python3.10/Python.h>
 #include <python3.10/structmember.h>
