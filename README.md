@@ -21,7 +21,7 @@ libpcap-py
  
 ## :running:Installation
 <details>
-<summary>:muscle:self-build</summary>
+<summary>:muscle:self-build (old)</summary>
 
 ##### step 1
 install followings
@@ -40,6 +40,31 @@ python3 setup.py build
 install using setup.py
 ```sh
 python3 setup.py install
+```
+</details>
+<details>
+
+<summary>:muscle:self-build (uv)</summary>
+
+##### step 1
+install dependencies:
+- uv
+- just (optional)
+- libpcap & libpcap lib
+- python3.10 lib
+
+##### step 2
+clone and build using uv (check just recipe)
+```sh
+git clone https://github.com/tooosay/libpcap-py
+cd libpcap-py
+just uv
+just build && just install
+```
+##### step 3
+Test whether the installation was successful
+```sh
+just build-test
 ```
 </details>
 
