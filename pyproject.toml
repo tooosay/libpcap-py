@@ -1,0 +1,21 @@
+[project]
+name = "libpcap-py"
+version = "0.3.0"
+description = "libpcap python wrapper"
+readme = "README.md"
+authors = [
+    { name = "tooosay" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "build>=1.4.0",
+]
+
+[build-system]
+requires = ["meson-python"]
+build-backend = "mesonpy"
+
+[dependency-groups]
+dev = [
+    "meson-python>=0.19.0",
+]
