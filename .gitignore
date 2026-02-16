@@ -1,3 +1,7 @@
 build/
 *.backup
 *.org
+dist/
+
+# python
+.venv
