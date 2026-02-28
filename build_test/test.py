@@ -10,7 +10,7 @@ def ensure_root():
 
 ensure_root()
 
-import pppy as p
+import libpcap_py as p
 import time
 
 filter_exp = "tcp"
