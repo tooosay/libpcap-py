@@ -6,7 +6,8 @@ dist/
 # python
 .venv
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
 # env
 .env
