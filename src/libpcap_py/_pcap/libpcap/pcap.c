@@ -7,7 +7,7 @@
  */
 
 #define THIS_VERSION " python wrapper version 0.3.0"
-#define THIS_MODULE_NAME "pppy"
+#define THIS_MODULE_NAME "_pcap"
 #define PY_SSIZE_T_CLEAN
 #include <python3.10/Python.h>
 #include <python3.10/structmember.h>
@@ -1098,7 +1098,7 @@ static PyModuleDef pcapmodule = {
 };
 
 // pyinit
-PyMODINIT_FUNC PyInit_pppy(void)
+PyMODINIT_FUNC PyInit__pcap(void)
 {
     // type initialization
     if (PyType_Ready(&PcapObjectType) < 0)

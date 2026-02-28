@@ -1,0 +1,6 @@
+option(
+  'pcap_backend',
+  type: 'combo',
+  choices: ['auto', 'libpcap'],
+  value: 'auto',
+)
