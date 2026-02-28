@@ -69,15 +69,15 @@ just build-test
 </details>
 
 
-## :construction: Supported Functions [36/74][48%]
+## :construction: Supported Functions [38/74][51%]
 - [X] pcap_create
 - [X] pcap_activate
 - [X] pcap_findalldevs
 - [ ] pcap_freealldevs
 - [X] pcap_lookupdev
 - [X] pcap_lookupnet
-- [ ] pcap_open_offline
-- [ ] pcap_open_offline_with_tstamp_precision
+- [X] pcap_open_offline
+- [X] pcap_open_offline_with_tstamp_precision
 - [ ] pcap_fopen_offline
 - [ ] pcap_fopen_offline_with_tstamp_precision
 - [X] pcap_open_live
