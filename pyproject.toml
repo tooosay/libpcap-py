@@ -15,7 +15,28 @@ dependencies = [
 requires = ["meson-python"]
 build-backend = "mesonpy"
 
+[tool.pytest]
+minversion = "9.0"
+addopts = ["-ra", "-v"]
+testpaths = ["tests"]
+
+faulthandler_timeout = "15"
+timeout = "20"
+timeout_method = "signal"
+
+markers = [
+  "online: requires live capture privileges / network"
+]
+
+
 [dependency-groups]
 dev = [
     "meson-python>=0.19.0",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "pytest-mock>=3.15.1",
+    "pytest-randomly>=4.0.1",
+    "pytest-sugar>=1.1.1",
+    "pytest-timeout>=2.4.0",
 ]
+
