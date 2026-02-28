@@ -375,6 +375,52 @@ static PyObject *pycap_open_live(PyObject *self, PyObject *args, PyObject *kwarg
     return result;
 }
 
+/* Offline functions */
+// pcap_open_offline_common
+PyObject *_open_offline_common(const char *fname, u_int precision)
+{
+    char errbuf[PCAP_ERRBUF_SIZE];
+    pcap_t *pcap = pcap_open_offline_with_tstamp_precision(fname, precision, errbuf);
+    if (!pcap)
+    {
+        PyErr_SetString(PyExc_RuntimeError, errbuf);
+        return NULL;
+    }
+    PyObject *result = PcapObject_New(pcap);
+    if (!result)
+    {
+        pcap_close(pcap);
+        return NULL;
+    }
+    return result;
+}
+// pcap_open_offline
+static PyObject *pycap_open_offline(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    const char *fname;
+    u_int precision = PCAP_TSTAMP_PRECISION_MICRO;
+    static char *keywords[] = {"path", "precision", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|I", keywords, &fname, &precision))
+        return NULL;
+
+    return _open_offline_common(fname, precision);
+}
+// pcap_open_offline_with_tstamp_precision
+static PyObject *pycap_open_offline_with_tstamp_precision(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    const char *fname;
+    u_int precision;
+    static char *keywords[] = {"path", "precision", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "sI", keywords, &fname, &precision))
+        return NULL;
+
+    return _open_offline_common(fname, precision);
+}
+// pcap_fopen_offline
+// pcap_fopen_offline_with_tstamp_precision
+
 // pcap_next
 static PyObject *pycap_next(PyObject *self, PyObject *args, PyObject *kwargs)
 {
@@ -1050,6 +1096,8 @@ static PyMethodDef PcapMethods[] = {
     {"lookupnet", pycap_lookupnet, METH_VARARGS, "pcap_lookupnet wrapper"},
     /* packet capture functions */
     {"open_live", (PyCFunction)pycap_open_live, METH_VARARGS | METH_KEYWORDS, "pcap_open_live wrapper"},
+    {"open_offline", (PyCFunction)pycap_open_offline, METH_VARARGS | METH_KEYWORDS, "pcap_open_offline wrapper"},
+    {"open_offline_with_tstamp_precision", (PyCFunction)pycap_open_offline_with_tstamp_precision, METH_VARARGS | METH_KEYWORDS, "pcap_open_offline_with_tstamp_precision wrapper"},
     {"next", (PyCFunction)pycap_next, METH_VARARGS | METH_KEYWORDS, "pcap_next wrapper"},
     {"loop", (PyCFunction)pycap_loop, METH_VARARGS | METH_KEYWORDS, "pcap_loop wrapper"},
     {"dispatch", (PyCFunction)pycap_dispatch, METH_VARARGS | METH_KEYWORDS, "pcap_dispatch wrapper"},
