@@ -4,7 +4,6 @@ libpcap-py
 </h1>
 
 <a href="https://github.com/tooosay/libpcap-py/tree/modernize2026"> <img alt="Project Status" src="https://img.shields.io/badge/Status-Restructuring%20since%202026--02-yellow?style=for-the-badge"></a>
-
 </div>
 
 #### Project status
@@ -20,6 +19,9 @@ libpcap-py
  * libpcap >= 1.10
  
 ## :running:Installation
+
+![Static Badge](https://img.shields.io/badge/platform-Linux-blue)
+
 <details>
 <summary>:muscle:self-build (old)</summary>
 
