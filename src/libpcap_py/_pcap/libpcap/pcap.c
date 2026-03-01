@@ -427,7 +427,6 @@ static PyObject *pycap_next(PyObject *self, PyObject *args, PyObject *kwargs)
     static char *keywords[] = {"pcap", NULL};
     PcapObject *pcap;
     struct pcap_pkthdr h;
-    PyObject *namedTuple = PyStructSequence_New(&packetTupleType);
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!", keywords, &PcapObjectType, &pcap))
         return NULL;
@@ -435,10 +434,12 @@ static PyObject *pycap_next(PyObject *self, PyObject *args, PyObject *kwargs)
     const char *packet = (const char *)pcap_next(pcap->pcap, &h);
     if (!packet)
     {
-        PyErr_SetString(PyExc_RuntimeError, "Could not grub packet");
-        return NULL;
+        Py_RETURN_NONE;
     }
-    PyObject *packetobj = Py_BuildValue("y#", packet, h.len); // bytes like object
+
+    PyObject *namedTuple = PyStructSequence_New(&packetTupleType);
+
+    PyObject *packetobj = Py_BuildValue("y#", packet, h.caplen); // bytes like object
     PyObject *sec = PyLong_FromLong(h.ts.tv_sec);
     PyObject *usec = PyLong_FromLong(h.ts.tv_usec);
     PyObject *len = PyLong_FromLong(h.len);
@@ -448,11 +449,7 @@ static PyObject *pycap_next(PyObject *self, PyObject *args, PyObject *kwargs)
     PyTuple_SetItem(namedTuple, 2, usec);
     PyTuple_SetItem(namedTuple, 3, len);
     PyTuple_SetItem(namedTuple, 4, caplen);
-    // Py_DECREF(packetobj);
-    // Py_DECREF(sec);
-    // Py_DECREF(usec);
-    // Py_DECREF(len);
-    // Py_DECREF(caplen);
+
     return namedTuple;
 }
 
