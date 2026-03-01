@@ -90,8 +90,8 @@ static PyObject *HeaderObject_New(struct pcap_pkthdr *header)
     HeaderObject *obj = (HeaderObject *)HeaderObjectType.tp_alloc(&HeaderObjectType, 0);
     if (!obj)
         return NULL;
-    obj->tv_sec = PyLong_FromLong(header->ts.tv_sec);
-    obj->tv_usec = PyLong_FromLong(header->ts.tv_usec);
+    obj->tv_sec = PyLong_FromLongLong(header->ts.tv_sec);
+    obj->tv_usec = PyLong_FromLongLong(header->ts.tv_usec);
     obj->len = PyLong_FromLong(header->len);
     obj->caplen = PyLong_FromLong(header->caplen);
     return (PyObject *)obj;
@@ -440,8 +440,8 @@ static PyObject *pycap_next(PyObject *self, PyObject *args, PyObject *kwargs)
     PyObject *namedTuple = PyStructSequence_New(&packetTupleType);
 
     PyObject *packetobj = Py_BuildValue("y#", packet, h.caplen); // bytes like object
-    PyObject *sec = PyLong_FromLong(h.ts.tv_sec);
-    PyObject *usec = PyLong_FromLong(h.ts.tv_usec);
+    PyObject *sec = PyLong_FromLongLong(h.ts.tv_sec);
+    PyObject *usec = PyLong_FromLongLong(h.ts.tv_usec);
     PyObject *len = PyLong_FromLong(h.len);
     PyObject *caplen = PyLong_FromLong(h.caplen);
     PyTuple_SetItem(namedTuple, 0, packetobj);
@@ -455,7 +455,9 @@ static PyObject *pycap_next(PyObject *self, PyObject *args, PyObject *kwargs)
 
 // this is not implemented yet
 // pcap_next_ex
-// static PyObject* pycap_next_ex(PyObject *self, PyObject *args, PyObject *kwargs){}
+static PyObject *pycap_next_ex(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+}
 
 // pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user)
 // callback functions
