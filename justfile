@@ -34,8 +34,8 @@ install:
 uninstall:
     uv pip uninstall {{ python_module_name }}
 
-test:
-    uv run pytest -m "not online"
+test *ARGS:
+    uv run pytest -m "not online" {{ ARGS }}
 
 build-test:
     uv run python -u {{ project_root }}/build_test/test.py
