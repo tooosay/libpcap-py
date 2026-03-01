@@ -105,13 +105,19 @@ static PyObject *PcapObject_New(pcap_t *pcap)
     return (PyObject *)obj;
 }
 
+void _close_once(PcapObject *tp)
+{
+    if (tp->pcap != NULL)
+    {
+        pcap_close(tp->pcap);
+        tp->pcap = NULL;
+    }
+}
+
 static void PcapObject_dealloc(PyObject *self)
 {
     PcapObject *tp = (PcapObject *)self;
-    if (tp->pcap)
-    {
-        pcap_close(tp->pcap);
-    }
+    _close_once(tp);
     Py_TYPE(tp)->tp_free((PyObject *)tp);
 }
 
@@ -880,8 +886,7 @@ static PyObject *pycap_close(PyObject *self, PyObject *args)
     {
         return NULL;
     }
-    pcap_close(pcap_obj->pcap);
-    Py_XDECREF(pcap_obj);
+    _close_once(pcap_obj);
     Py_RETURN_NONE;
 }
 // pcap_open_dead

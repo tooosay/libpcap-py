@@ -4,15 +4,13 @@ import libpcap_py as p
 def test_offline_open_and_read_one_packet(one_packet_pcap_path):
     pcap = p.open_offline(str(one_packet_pcap_path))
     
-    pkt1 = next(pcap)
+    pkt1 = p.next_ex(pcap)
     assert pkt1 is not None
 
-    print(pcap)
+    pkt2 = p.next_ex(pcap)
+    assert pkt2.data is None
 
-    pkt2 = next(pcap)
-    assert pkt2 is None
-
-    pcap.close()
+    p.close(pcap)
 
 def test_offline_invalid_file_raises(tmp_path):
 
