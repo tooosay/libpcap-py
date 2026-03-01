@@ -69,7 +69,7 @@ just build-test
 </details>
 
 
-## :construction: Supported Functions [38/74][51%]
+## :construction: Supported Functions [39/74][53%]
 - [X] pcap_create
 - [X] pcap_activate
 - [X] pcap_findalldevs
@@ -114,7 +114,7 @@ just build-test
 - [X] pcap_dispatch
 - [X] pcap_loop
 - [X] pcap_next
-- [ ] pcap_next_ex
+- [X] pcap_next_ex
 - [X] pcap_breakloop
 - [X] pcap_setnonblock
 - [X] pcap_getnonblock
