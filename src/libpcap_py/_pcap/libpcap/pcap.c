@@ -219,9 +219,22 @@ static PyStructSequence_Desc argTupleDesc = {
     3,
 };
 
+static PyStructSequence_Field packetTupleWithStatusCodeTupleFields[] = {
+    {"result", "status code"},
+    {"data", "packet tuple"},
+    {NULL}};
+
+static PyStructSequence_Desc packetTupleWithStatusCodeTupleDesc = {
+    "packetTupleWithStatusCodeTuple",
+    NULL,
+    packetTupleWithStatusCodeTupleFields,
+    2,
+};
+
 static PyTypeObject lookupnetTupleType;
 static PyTypeObject packetTupleType;
 static PyTypeObject argTupleType;
+static PyTypeObject packetTupleWithStatusCodeTupleType;
 
 /* Methods */
 /* lookupfunctions */
@@ -457,6 +470,66 @@ static PyObject *pycap_next(PyObject *self, PyObject *args, PyObject *kwargs)
 // pcap_next_ex
 static PyObject *pycap_next_ex(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    static char *keywords[] = {"pcap", NULL};
+    PcapObject *pcap;
+    struct pcap_pkthdr *h = NULL;
+    const u_char *pkt_data = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!", keywords, &PcapObjectType, &pcap))
+        return NULL;
+
+    /*
+     * Return codes for pcap_read() are:
+     *   -  0: timeout
+     *   - -1: error // so, this is the pure error
+     *   - -2: loop was broken out of with pcap_breakloop()
+     *   - >0: OK, result is number of packets captured, so
+     *         it will be 1 in this case, as we've passed
+     *         a maximum packet count of 1
+     */
+    int status = pcap_next_ex(pcap->pcap, &h, &pkt_data);
+
+    if (status < 0 && status != -2)
+    {
+        const char *err = pcap_geterr(pcap->pcap);
+        if (!err || err[0] == '\0')
+        {
+            PyErr_Format(PyExc_RuntimeError, "pcap_next_ex failed (status=%d)", status);
+        }
+        else
+        {
+            PyErr_Format(PyExc_RuntimeError, "%s (status=%d)", err, status);
+        }
+        return NULL;
+    }
+
+    PyObject *data = NULL;
+
+    if (status == 1)
+    {
+        data = PyStructSequence_New(&packetTupleType);
+        PyObject *packetobj = PyBytes_FromStringAndSize((const char *)pkt_data, h->caplen); // bytes like object
+        PyObject *sec = PyLong_FromLongLong(h->ts.tv_sec);
+        PyObject *usec = PyLong_FromLongLong(h->ts.tv_usec);
+        PyObject *len = PyLong_FromLong(h->len);
+        PyObject *caplen = PyLong_FromLong(h->caplen);
+        PyTuple_SetItem(data, 0, packetobj);
+        PyTuple_SetItem(data, 1, sec);
+        PyTuple_SetItem(data, 2, usec);
+        PyTuple_SetItem(data, 3, len);
+        PyTuple_SetItem(data, 4, caplen);
+    }
+    else
+    {
+        Py_INCREF(Py_None);
+        data = Py_None;
+    }
+
+    PyObject *result = PyStructSequence_New(&packetTupleWithStatusCodeTupleType);
+    PyTuple_SetItem(result, 0, PyLong_FromLong(status));
+    PyTuple_SetItem(result, 1, data);
+
+    return result;
 }
 
 // pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user)
@@ -1098,6 +1171,7 @@ static PyMethodDef PcapMethods[] = {
     {"open_offline", (PyCFunction)pycap_open_offline, METH_VARARGS | METH_KEYWORDS, "pcap_open_offline wrapper"},
     {"open_offline_with_tstamp_precision", (PyCFunction)pycap_open_offline_with_tstamp_precision, METH_VARARGS | METH_KEYWORDS, "pcap_open_offline_with_tstamp_precision wrapper"},
     {"next", (PyCFunction)pycap_next, METH_VARARGS | METH_KEYWORDS, "pcap_next wrapper"},
+    {"next_ex", (PyCFunction)pycap_next_ex, METH_VARARGS | METH_KEYWORDS, "pcap_next_ex wrapper"},
     {"loop", (PyCFunction)pycap_loop, METH_VARARGS | METH_KEYWORDS, "pcap_loop wrapper"},
     {"dispatch", (PyCFunction)pycap_dispatch, METH_VARARGS | METH_KEYWORDS, "pcap_dispatch wrapper"},
     {"setnonblock", pycap_setnonblock, METH_VARARGS, "pcap_setnonblock wrapper"},
@@ -1162,6 +1236,8 @@ PyMODINIT_FUNC PyInit__pcap(void)
     if (PyStructSequence_InitType2(&packetTupleType, &packetTupleDesc) < 0)
         return NULL;
     if (PyStructSequence_InitType2(&argTupleType, &argTupleDesc) < 0)
+        return NULL;
+    if (PyStructSequence_InitType2(&packetTupleWithStatusCodeTupleType, &packetTupleWithStatusCodeTupleDesc) < 0)
         return NULL;
 
     // module initialization
