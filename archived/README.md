@@ -1,4 +1,5 @@
-# libpcap-py
+# libpcap-py ![Static Badge](https://img.shields.io/badge/Outdated-red?style=for-the-badge)
+
 [libpcap](https://www.tcpdump.org/) Python binding
 
 ## :snowman: Old version (kept for history)
