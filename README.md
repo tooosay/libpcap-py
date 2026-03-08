@@ -146,5 +146,5 @@ uv run pytest
 - [X] pcap_perror
 
 ## :oden:LICENSE
-[2-clause BSD License](https://opensource.org/license/bsd-2-clause/)
+[3-clause BSD License](https://opensource.org/license/bsd-3-clause/)
 
