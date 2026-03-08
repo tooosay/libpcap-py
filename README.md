@@ -5,9 +5,9 @@ libpcap-py
 </div>
 
 #### Project status
-- Status: Modernizing (2026)
-- Current focus: pyproject.toml, flake, tests
-- Next: support python14 -> remaining todos
+- Status: Active
+- Current focus: CI,tests
+- Next: pip installation
 
 ## What's this?
 [libpcap](https://www.tcpdump.org/) Python binding
