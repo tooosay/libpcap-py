@@ -23,28 +23,6 @@ libpcap-py
 ![Static Badge](https://img.shields.io/badge/platform-Linux-blue)
 
 <details>
-<summary>:muscle:self-build (old)</summary>
-
-##### step 1
-install followings
-```sh
-sudo apt install libpcap-dev
-sudo apt install python3.10-dev libpython3.10-dev
-```
-##### step 2
-clone and build using setup.py
-```sh
-git clone https://github.com/tooosay/libpcap-py
-cd libpcap-py
-python3 setup.py build
-```
-##### step 3
-install using setup.py
-```sh
-python3 setup.py install
-```
-</details>
-<details>
 <summary>:muscle:self-build (just + uv) (recommended)</summary>
 
 ##### step 1
