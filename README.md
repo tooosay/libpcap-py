@@ -91,13 +91,13 @@ uv run pytest
 - [X] pcap_set_timeout
 - [ ] pcap_set_immediate_mode
 - [ ] pcap_set_buffer_size
-- [ ] pcap_set_stapmp_type
-- [ ] pcap_list_tsamp_types
+- [ ] pcap_set_stamp_type
+- [ ] pcap_list_tstamp_types
 - [ ] pcap_free_tstamp_types
 - [ ] pcap_tstamp_type_val_to_name
 - [ ] pcap_tsamp_type_val_to_description
 - [ ] pcap_tsamp_type_name_to_val
-- [ ] pcap_set_tstamp_precisoin
+- [ ] pcap_set_tstamp_precision
 - [ ] pcap_get_tstamp_precision
 - [X] pcap_datalink
 - [ ] pcap_file
