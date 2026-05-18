@@ -1,6 +1,6 @@
 project('libpcap-py', 'c')
 
-py = import('python').find_installation('python3.10',pure: false)
+py = import('python').find_installation(pure: false)
 
 backend = get_option('pcap_backend')
 if backend == 'auto'

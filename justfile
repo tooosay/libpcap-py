@@ -47,5 +47,49 @@ clean: guard-project-root guard-python-module
 clean-uv: guard-project-root
     rm -rf {{ project_root }}/.venv {{ project_root }}/.dist {{ project_root }}/uv.lock
 
+clean-all: guard-project-root clean-uv
+    rm -rf {{ project_root }}/build {{ project_root }}/.pytest_cache
+
 uv:
     UV_NO_CACHE=1 UV_NO_EDITABLE=1 UV_PROJECT_ENVIRONMENT={{ project_root }}/.venv uv sync
+
+vc-current PY="3.10": guard-project-root
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    py="{{ PY }}"
+    py="${py,,}"
+    py="${py#python}"
+    py="${py#cp}"
+    tag="cp${py//./}"  # 3.10 -> cp310
+
+    buildDir="{{ project_root }}/build"
+
+    if [[ ! -f "${buildDir}/$tag/compile_commands.json" ]]; then
+      echo "missing: ${buildDir}/$tag/compile_commands.json"
+      echo "hint: run meson once"
+      exit 1
+    fi
+
+    ln -sfn "$tag" ${buildDir}/current
+    echo "${buildDir}/current -> $tag"
+
+vc-rm-current: guard-project-root
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    target={{ project_root }}/build/current
+
+    if [[ -L "${target}" ]]; then
+      rm -f "${target}"
+      echo "removed: ${target}"
+      exit 0
+    fi
+
+    if [[ -e "${target}" ]]; then
+      echo "refuse: ${target} exists but is not a symlink"
+      ls -la "${target}" || true
+      exit 1
+    fi
+
+    echo "${target} not found"

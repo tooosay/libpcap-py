@@ -70,8 +70,8 @@
 #define THIS_VERSION " python wrapper version 0.3.0"
 #define THIS_MODULE_NAME "_pcap"
 #define PY_SSIZE_T_CLEAN
-#include <python3.10/Python.h>
-#include <python3.10/structmember.h>
+#include <Python.h>
+#include <structmember.h>
 // #include <python3.10/object.h>
 #include <pcap.h>
 
