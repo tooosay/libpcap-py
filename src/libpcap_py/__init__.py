@@ -1,1 +1,1 @@
-from  ._pcap import * # noqa
+from ._pcap import *  # noqa

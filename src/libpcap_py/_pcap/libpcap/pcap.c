@@ -79,14 +79,13 @@
 // types
 typedef struct
 {
-    PyObject_HEAD pcap_t *pcap;
+    PyObject_HEAD pcap_t* pcap;
 } PcapObject;
 
-static void PcapObject_dealloc(PyObject *self);
+static void PcapObject_dealloc(PyObject* self);
 // define PcapObject
 static PyTypeObject PcapObjectType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-        .tp_name = "pcap_t",
+    PyVarObject_HEAD_INIT(NULL, 0).tp_name = "pcap_t",
     .tp_doc = "pcap struct wrapper",
     .tp_basicsize = sizeof(PcapObject),
     .tp_itemsize = 0,
@@ -96,16 +95,16 @@ static PyTypeObject PcapObjectType = {
     .tp_dealloc = PcapObject_dealloc,
 };
 
-static PyObject *PcapObject_New(pcap_t *pcap)
+static PyObject* PcapObject_New(pcap_t* pcap)
 {
-    PcapObject *obj = (PcapObject *)PcapObjectType.tp_alloc(&PcapObjectType, 0);
+    PcapObject* obj = (PcapObject*)PcapObjectType.tp_alloc(&PcapObjectType, 0);
     if (!obj)
         return NULL;
     obj->pcap = pcap;
-    return (PyObject *)obj;
+    return (PyObject*)obj;
 }
 
-void _close_once(PcapObject *tp)
+void _close_once(PcapObject* tp)
 {
     if (tp->pcap != NULL)
     {
@@ -114,21 +113,21 @@ void _close_once(PcapObject *tp)
     }
 }
 
-static void PcapObject_dealloc(PyObject *self)
+static void PcapObject_dealloc(PyObject* self)
 {
-    PcapObject *tp = (PcapObject *)self;
+    PcapObject* tp = (PcapObject*)self;
     _close_once(tp);
-    Py_TYPE(tp)->tp_free((PyObject *)tp);
+    Py_TYPE(tp)->tp_free((PyObject*)tp);
 }
 
 typedef struct
 {
     PyObject_HEAD
         // struct pcap_pkthdr* pkthdr;
-        PyObject *tv_sec;
-    PyObject *tv_usec;
-    PyObject *len;
-    PyObject *caplen;
+        PyObject* tv_sec;
+    PyObject* tv_usec;
+    PyObject* len;
+    PyObject* caplen;
 } HeaderObject;
 static PyMemberDef HeaderObject_members[] = {
     {"tv_sec", T_OBJECT_EX, offsetof(HeaderObject, tv_sec), 0, "timestamp second"},
@@ -138,10 +137,9 @@ static PyMemberDef HeaderObject_members[] = {
     {NULL} /* Sentinel */
 };
 
-static void HeaderObject_dealloc(PyObject *self);
+static void HeaderObject_dealloc(PyObject* self);
 static PyTypeObject HeaderObjectType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-        .tp_name = "packetHeader",
+    PyVarObject_HEAD_INIT(NULL, 0).tp_name = "packetHeader",
     .tp_doc = "pcap_pkhdr struct wrapper",
     .tp_basicsize = sizeof(HeaderObject),
     .tp_itemsize = 0,
@@ -152,26 +150,26 @@ static PyTypeObject HeaderObjectType = {
     .tp_members = HeaderObject_members,
 };
 
-static PyObject *HeaderObject_New(struct pcap_pkthdr *header)
+static PyObject* HeaderObject_New(struct pcap_pkthdr* header)
 {
-    HeaderObject *obj = (HeaderObject *)HeaderObjectType.tp_alloc(&HeaderObjectType, 0);
+    HeaderObject* obj = (HeaderObject*)HeaderObjectType.tp_alloc(&HeaderObjectType, 0);
     if (!obj)
         return NULL;
     obj->tv_sec = PyLong_FromLongLong(header->ts.tv_sec);
     obj->tv_usec = PyLong_FromLongLong(header->ts.tv_usec);
     obj->len = PyLong_FromLong(header->len);
     obj->caplen = PyLong_FromLong(header->caplen);
-    return (PyObject *)obj;
+    return (PyObject*)obj;
 }
 
-static void HeaderObject_dealloc(PyObject *self)
+static void HeaderObject_dealloc(PyObject* self)
 {
-    HeaderObject *tp = (HeaderObject *)self;
+    HeaderObject* tp = (HeaderObject*)self;
     Py_TYPE(tp)->tp_free(tp->tv_sec);
     Py_TYPE(tp)->tp_free(tp->tv_usec);
     Py_TYPE(tp)->tp_free(tp->caplen);
     Py_TYPE(tp)->tp_free(tp->len);
-    Py_TYPE(tp)->tp_free((PyObject *)tp);
+    Py_TYPE(tp)->tp_free((PyObject*)tp);
 }
 
 typedef struct
@@ -191,24 +189,35 @@ static PyMemberDef PcapStat_members[] = {
     {"drop", T_UINT, offsetof(PcapStatObject, drop), READONLY, "Number of packets dropped"},
     {"ifdrop", T_UINT, offsetof(PcapStatObject, ifdrop), READONLY, "Drops by interface"},
 #ifdef _WIN32
-    {"capt", T_UINT, offsetof(PcapStatObject, capt), READONLY, "Number of packets that reach the application"},
-    {"sent", T_UINT, offsetof(PcapStatObject, sent), READONLY, "Number of packets sent by the server on the network"},
-    {"netdrop", T_UINT, offsetof(PcapStatObject, netdrop), READONLY, "Number of packets lost on the network"},
+    {"capt",
+     T_UINT,
+     offsetof(PcapStatObject, capt),
+     READONLY,
+     "Number of packets that reach the application"},
+    {"sent",
+     T_UINT,
+     offsetof(PcapStatObject, sent),
+     READONLY,
+     "Number of packets sent by the server on the network"},
+    {"netdrop",
+     T_UINT,
+     offsetof(PcapStatObject, netdrop),
+     READONLY,
+     "Number of packets lost on the network"},
 #endif
     {NULL}};
 
 static PyTypeObject PcapStatObjectType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-        .tp_name = "PcapStat",
+    PyVarObject_HEAD_INIT(NULL, 0).tp_name = "PcapStat",
     .tp_basicsize = sizeof(PcapStatObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_members = PcapStat_members,
 };
 
-static PyObject *PcapStatObject_New(struct pcap_stat *stat)
+static PyObject* PcapStatObject_New(struct pcap_stat* stat)
 {
-    PcapStatObject *obj = (PcapStatObject *)PcapStatObjectType.tp_alloc(&PcapStatObjectType, 0);
+    PcapStatObject* obj = (PcapStatObject*)PcapStatObjectType.tp_alloc(&PcapStatObjectType, 0);
     obj->recv = stat->ps_recv;
     obj->drop = stat->ps_drop;
     obj->ifdrop = stat->ps_ifdrop;
@@ -217,17 +226,16 @@ static PyObject *PcapStatObject_New(struct pcap_stat *stat)
     obj->sent = stat->ps_sent;
     obj->netdrop = stat->ps_netdrop;
 #endif
-    return (PyObject *)obj;
+    return (PyObject*)obj;
 }
 
 typedef struct
 {
-    PyObject_HEAD struct bpf_program *fp;
+    PyObject_HEAD struct bpf_program* fp;
 } BpfProgramObject;
 
 static PyTypeObject BpfProgramObjectType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-        .tp_name = "bpf_program",
+    PyVarObject_HEAD_INIT(NULL, 0).tp_name = "bpf_program",
     .tp_doc = "bpf_program wrapper",
     .tp_basicsize = sizeof(BpfProgramObject),
     .tp_itemsize = 0,
@@ -236,19 +244,18 @@ static PyTypeObject BpfProgramObjectType = {
     .tp_flags = Py_TPFLAGS_DEFAULT,
 };
 
-static PyObject *BpfProgramObject_New(struct bpf_program *fp)
+static PyObject* BpfProgramObject_New(struct bpf_program* fp)
 {
-    BpfProgramObject *obj = (BpfProgramObject *)BpfProgramObjectType.tp_alloc(&BpfProgramObjectType, 0);
+    BpfProgramObject* obj =
+        (BpfProgramObject*)BpfProgramObjectType.tp_alloc(&BpfProgramObjectType, 0);
     if (!obj)
         return NULL;
     obj->fp = fp;
-    return (PyObject *)obj;
+    return (PyObject*)obj;
 }
 
 static PyStructSequence_Field lookupnetTupleFields[] = {
-    {"address", "network interface address (netp)"},
-    {"mask", "network mask"},
-    {NULL}};
+    {"address", "network interface address (netp)"}, {"mask", "network mask"}, {NULL}};
 
 // Create the type object for the named tuple
 static PyStructSequence_Desc lookupnetTupleDesc = {
@@ -258,13 +265,12 @@ static PyStructSequence_Desc lookupnetTupleDesc = {
     2, // Number of fields
 };
 
-static PyStructSequence_Field packetTupleFields[] = {
-    {"packet", "original packet"},
-    {"tv_sec", "timestamp -- seconds"},
-    {"tv_usec", "timestamp -- micro seconds"},
-    {"len", "length this packet (off wire)"},
-    {"caplen", "lenght of portion present"},
-    {NULL}};
+static PyStructSequence_Field packetTupleFields[] = {{"packet", "original packet"},
+                                                     {"tv_sec", "timestamp -- seconds"},
+                                                     {"tv_usec", "timestamp -- micro seconds"},
+                                                     {"len", "length this packet (off wire)"},
+                                                     {"caplen", "lenght of portion present"},
+                                                     {NULL}};
 
 static PyStructSequence_Desc packetTupleDesc = {
     "packetTuple",
@@ -287,9 +293,7 @@ static PyStructSequence_Desc argTupleDesc = {
 };
 
 static PyStructSequence_Field packetTupleWithStatusCodeTupleFields[] = {
-    {"result", "status code"},
-    {"data", "packet tuple"},
-    {NULL}};
+    {"result", "status code"}, {"data", "packet tuple"}, {NULL}};
 
 static PyStructSequence_Desc packetTupleWithStatusCodeTupleDesc = {
     "packetTupleWithStatusCodeTuple",
@@ -307,29 +311,30 @@ static PyTypeObject packetTupleWithStatusCodeTupleType;
 /* lookupfunctions */
 
 // pcap_lookupdev (pcap_findalldevs)
-// ‘pcap_lookupdev’ is deprecated: use 'pcap_findalldevs' and use the first device [-Wdeprecated-declarations]
-// this function mocks pcap_lookupdev just by returning firsrt device name of pcap_findalldevs
-static PyObject *pycap_lookupdev(PyObject *self, PyObject *args)
+// ‘pcap_lookupdev’ is deprecated: use 'pcap_findalldevs' and use the first device
+// [-Wdeprecated-declarations] this function mocks pcap_lookupdev just by returning firsrt device
+// name of pcap_findalldevs
+static PyObject* pycap_lookupdev(PyObject* self, PyObject* args)
 {
     char errbuf[PCAP_ERRBUF_SIZE];
-    pcap_if_t *alldevs = NULL;
+    pcap_if_t* alldevs = NULL;
     if (pcap_findalldevs(&alldevs, errbuf) < 0)
     {
         PyErr_SetString(PyExc_RuntimeError, errbuf);
         return NULL;
     }
-    PyObject *device_name = PyUnicode_FromString(alldevs->name);
+    PyObject* device_name = PyUnicode_FromString(alldevs->name);
     pcap_freealldevs(alldevs);
     return device_name;
 }
 
 // pcap_findalldevs
-static PyObject *pycap_findalldevs(PyObject *self, PyObject *args)
+static PyObject* pycap_findalldevs(PyObject* self, PyObject* args)
 {
     char errbuf[PCAP_ERRBUF_SIZE];
-    pcap_if_t *alldevs = NULL;
-    struct sockaddr *tmp;
-    PyObject *list = PyList_New(0);
+    pcap_if_t* alldevs = NULL;
+    struct sockaddr* tmp;
+    PyObject* list = PyList_New(0);
 
     if (pcap_findalldevs(&alldevs, errbuf) < 0)
     {
@@ -338,24 +343,26 @@ static PyObject *pycap_findalldevs(PyObject *self, PyObject *args)
     }
     else
     {
-        for (pcap_if_t *dev = alldevs; dev != NULL; dev = dev->next)
+        for (pcap_if_t* dev = alldevs; dev != NULL; dev = dev->next)
         {
-            PyObject *dev_dict = PyDict_New();
-            PyObject *dev_dict_inner = PyDict_New();
+            PyObject* dev_dict = PyDict_New();
+            PyObject* dev_dict_inner = PyDict_New();
             PyDict_SetItemString(dev_dict, "name", PyUnicode_FromString(dev->name));
-            PyObject *description = (dev->description != NULL) ? PyUnicode_FromString(dev->description) : Py_None;
+            PyObject* description =
+                (dev->description != NULL) ? PyUnicode_FromString(dev->description) : Py_None;
             PyDict_SetItemString(dev_dict, "description", description);
             PyDict_SetItemString(dev_dict, "flags", PyLong_FromUnsignedLong(dev->flags));
-            PyObject *addresses = (dev->addresses != NULL) ? dev_dict_inner : Py_None;
+            PyObject* addresses = (dev->addresses != NULL) ? dev_dict_inner : Py_None;
             PyDict_SetItemString(dev_dict, "addresses", addresses);
             if (dev->addresses)
             {
                 tmp = dev->addresses->addr;
                 if (tmp)
                 {
-                    PyObject *_dict = PyDict_New();
+                    PyObject* _dict = PyDict_New();
                     PyDict_SetItemString(dev_dict_inner, "addr", _dict);
-                    PyDict_SetItemString(_dict, "sa_family", PyLong_FromUnsignedLong(tmp->sa_family));
+                    PyDict_SetItemString(
+                        _dict, "sa_family", PyLong_FromUnsignedLong(tmp->sa_family));
                     PyDict_SetItemString(_dict, "sa_data", PyUnicode_FromString(tmp->sa_data));
                 }
                 else
@@ -365,9 +372,10 @@ static PyObject *pycap_findalldevs(PyObject *self, PyObject *args)
                 tmp = dev->addresses->broadaddr;
                 if (tmp)
                 {
-                    PyObject *_dict = PyDict_New();
+                    PyObject* _dict = PyDict_New();
                     PyDict_SetItemString(dev_dict_inner, "broadaddr", _dict);
-                    PyDict_SetItemString(_dict, "sa_family", PyLong_FromUnsignedLong(tmp->sa_family));
+                    PyDict_SetItemString(
+                        _dict, "sa_family", PyLong_FromUnsignedLong(tmp->sa_family));
                     PyDict_SetItemString(_dict, "sa_data", PyUnicode_FromString(tmp->sa_data));
                 }
                 else
@@ -377,9 +385,10 @@ static PyObject *pycap_findalldevs(PyObject *self, PyObject *args)
                 tmp = dev->addresses->dstaddr;
                 if (tmp)
                 {
-                    PyObject *_dict = PyDict_New();
+                    PyObject* _dict = PyDict_New();
                     PyDict_SetItemString(dev_dict_inner, "dstaddr", _dict);
-                    PyDict_SetItemString(_dict, "sa_family", PyLong_FromUnsignedLong(tmp->sa_family));
+                    PyDict_SetItemString(
+                        _dict, "sa_family", PyLong_FromUnsignedLong(tmp->sa_family));
                     PyDict_SetItemString(_dict, "sa_data", PyUnicode_FromString(tmp->sa_data));
                 }
                 else
@@ -389,9 +398,10 @@ static PyObject *pycap_findalldevs(PyObject *self, PyObject *args)
                 tmp = dev->addresses->netmask;
                 if (tmp)
                 {
-                    PyObject *_dict = PyDict_New();
+                    PyObject* _dict = PyDict_New();
                     PyDict_SetItemString(dev_dict_inner, "netmask", _dict);
-                    PyDict_SetItemString(_dict, "sa_family", PyLong_FromUnsignedLong(tmp->sa_family));
+                    PyDict_SetItemString(
+                        _dict, "sa_family", PyLong_FromUnsignedLong(tmp->sa_family));
                     PyDict_SetItemString(_dict, "sa_data", PyUnicode_FromString(tmp->sa_data));
                 }
                 else
@@ -408,13 +418,13 @@ static PyObject *pycap_findalldevs(PyObject *self, PyObject *args)
 }
 
 // pcap_lookupnet
-static PyObject *pycap_lookupnet(PyObject *self, PyObject *args)
+static PyObject* pycap_lookupnet(PyObject* self, PyObject* args)
 {
     bpf_u_int32 netp;  /* ip address of interface */
     bpf_u_int32 maskp; /* subnet mask of interface */
     char errbuf[PCAP_ERRBUF_SIZE];
-    const char *device;
-    PyObject *namedTuple = PyStructSequence_New(&lookupnetTupleType);
+    const char* device;
+    PyObject* namedTuple = PyStructSequence_New(&lookupnetTupleType);
 
     if (!PyArg_ParseTuple(args, "s", &device))
         return NULL;
@@ -434,16 +444,17 @@ static PyObject *pycap_lookupnet(PyObject *self, PyObject *args)
 /* Packet-Capture functions */
 
 // pcap_open_live
-static PyObject *pycap_open_live(PyObject *self, PyObject *args, PyObject *kwargs)
+static PyObject* pycap_open_live(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-    const char *device;
+    const char* device;
     int snaplen = 65535;
     int promisc = 0; // 0 for false in promiscuous mode
     int to_ms = 0;   // snif until error
     char errbuf[PCAP_ERRBUF_SIZE];
-    pcap_t *pcap = NULL;
-    static char *keywords[] = {"device", "snapshot_len", "promiscuous_mode", "timeout_ms", NULL};
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|ipi", keywords, &device, &snaplen, &promisc, &to_ms))
+    pcap_t* pcap = NULL;
+    static char* keywords[] = {"device", "snapshot_len", "promiscuous_mode", "timeout_ms", NULL};
+    if (!PyArg_ParseTupleAndKeywords(
+            args, kwargs, "s|ipi", keywords, &device, &snaplen, &promisc, &to_ms))
         return NULL;
     pcap = pcap_open_live(device, snaplen, promisc, to_ms, errbuf);
     if (!pcap)
@@ -451,22 +462,22 @@ static PyObject *pycap_open_live(PyObject *self, PyObject *args, PyObject *kwarg
         PyErr_SetString(PyExc_RuntimeError, errbuf);
         return NULL;
     }
-    PyObject *result = PcapObject_New(pcap);
+    PyObject* result = PcapObject_New(pcap);
     return result;
 }
 
 /* Offline functions */
 // pcap_open_offline_common
-PyObject *_open_offline_common(const char *fname, u_int precision)
+PyObject* _open_offline_common(const char* fname, u_int precision)
 {
     char errbuf[PCAP_ERRBUF_SIZE];
-    pcap_t *pcap = pcap_open_offline_with_tstamp_precision(fname, precision, errbuf);
+    pcap_t* pcap = pcap_open_offline_with_tstamp_precision(fname, precision, errbuf);
     if (!pcap)
     {
         PyErr_SetString(PyExc_RuntimeError, errbuf);
         return NULL;
     }
-    PyObject *result = PcapObject_New(pcap);
+    PyObject* result = PcapObject_New(pcap);
     if (!result)
     {
         pcap_close(pcap);
@@ -475,11 +486,11 @@ PyObject *_open_offline_common(const char *fname, u_int precision)
     return result;
 }
 // pcap_open_offline
-static PyObject *pycap_open_offline(PyObject *self, PyObject *args, PyObject *kwargs)
+static PyObject* pycap_open_offline(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-    const char *fname;
+    const char* fname;
     u_int precision = PCAP_TSTAMP_PRECISION_MICRO;
-    static char *keywords[] = {"path", "precision", NULL};
+    static char* keywords[] = {"path", "precision", NULL};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|I", keywords, &fname, &precision))
         return NULL;
@@ -487,11 +498,12 @@ static PyObject *pycap_open_offline(PyObject *self, PyObject *args, PyObject *kw
     return _open_offline_common(fname, precision);
 }
 // pcap_open_offline_with_tstamp_precision
-static PyObject *pycap_open_offline_with_tstamp_precision(PyObject *self, PyObject *args, PyObject *kwargs)
+static PyObject*
+pycap_open_offline_with_tstamp_precision(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-    const char *fname;
+    const char* fname;
     u_int precision;
-    static char *keywords[] = {"path", "precision", NULL};
+    static char* keywords[] = {"path", "precision", NULL};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "sI", keywords, &fname, &precision))
         return NULL;
@@ -502,28 +514,28 @@ static PyObject *pycap_open_offline_with_tstamp_precision(PyObject *self, PyObje
 // pcap_fopen_offline_with_tstamp_precision
 
 // pcap_next
-static PyObject *pycap_next(PyObject *self, PyObject *args, PyObject *kwargs)
+static PyObject* pycap_next(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-    static char *keywords[] = {"pcap", NULL};
-    PcapObject *pcap;
+    static char* keywords[] = {"pcap", NULL};
+    PcapObject* pcap;
     struct pcap_pkthdr h;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!", keywords, &PcapObjectType, &pcap))
         return NULL;
 
-    const char *packet = (const char *)pcap_next(pcap->pcap, &h);
+    const char* packet = (const char*)pcap_next(pcap->pcap, &h);
     if (!packet)
     {
         Py_RETURN_NONE;
     }
 
-    PyObject *namedTuple = PyStructSequence_New(&packetTupleType);
+    PyObject* namedTuple = PyStructSequence_New(&packetTupleType);
 
-    PyObject *packetobj = Py_BuildValue("y#", packet, h.caplen); // bytes like object
-    PyObject *sec = PyLong_FromLongLong(h.ts.tv_sec);
-    PyObject *usec = PyLong_FromLongLong(h.ts.tv_usec);
-    PyObject *len = PyLong_FromLong(h.len);
-    PyObject *caplen = PyLong_FromLong(h.caplen);
+    PyObject* packetobj = Py_BuildValue("y#", packet, h.caplen); // bytes like object
+    PyObject* sec = PyLong_FromLongLong(h.ts.tv_sec);
+    PyObject* usec = PyLong_FromLongLong(h.ts.tv_usec);
+    PyObject* len = PyLong_FromLong(h.len);
+    PyObject* caplen = PyLong_FromLong(h.caplen);
     PyTuple_SetItem(namedTuple, 0, packetobj);
     PyTuple_SetItem(namedTuple, 1, sec);
     PyTuple_SetItem(namedTuple, 2, usec);
@@ -535,12 +547,12 @@ static PyObject *pycap_next(PyObject *self, PyObject *args, PyObject *kwargs)
 
 // this is not implemented yet
 // pcap_next_ex
-static PyObject *pycap_next_ex(PyObject *self, PyObject *args, PyObject *kwargs)
+static PyObject* pycap_next_ex(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-    static char *keywords[] = {"pcap", NULL};
-    PcapObject *pcap;
-    struct pcap_pkthdr *h = NULL;
-    const u_char *pkt_data = NULL;
+    static char* keywords[] = {"pcap", NULL};
+    PcapObject* pcap;
+    struct pcap_pkthdr* h = NULL;
+    const u_char* pkt_data = NULL;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!", keywords, &PcapObjectType, &pcap))
         return NULL;
@@ -558,7 +570,7 @@ static PyObject *pycap_next_ex(PyObject *self, PyObject *args, PyObject *kwargs)
 
     if (status < 0 && status != -2)
     {
-        const char *err = pcap_geterr(pcap->pcap);
+        const char* err = pcap_geterr(pcap->pcap);
         if (!err || err[0] == '\0')
         {
             PyErr_Format(PyExc_RuntimeError, "pcap_next_ex failed (status=%d)", status);
@@ -570,16 +582,17 @@ static PyObject *pycap_next_ex(PyObject *self, PyObject *args, PyObject *kwargs)
         return NULL;
     }
 
-    PyObject *data = NULL;
+    PyObject* data = NULL;
 
     if (status == 1)
     {
         data = PyStructSequence_New(&packetTupleType);
-        PyObject *packetobj = PyBytes_FromStringAndSize((const char *)pkt_data, h->caplen); // bytes like object
-        PyObject *sec = PyLong_FromLongLong(h->ts.tv_sec);
-        PyObject *usec = PyLong_FromLongLong(h->ts.tv_usec);
-        PyObject *len = PyLong_FromLong(h->len);
-        PyObject *caplen = PyLong_FromLong(h->caplen);
+        PyObject* packetobj =
+            PyBytes_FromStringAndSize((const char*)pkt_data, h->caplen); // bytes like object
+        PyObject* sec = PyLong_FromLongLong(h->ts.tv_sec);
+        PyObject* usec = PyLong_FromLongLong(h->ts.tv_usec);
+        PyObject* len = PyLong_FromLong(h->len);
+        PyObject* caplen = PyLong_FromLong(h->caplen);
         PyTuple_SetItem(data, 0, packetobj);
         PyTuple_SetItem(data, 1, sec);
         PyTuple_SetItem(data, 2, usec);
@@ -592,7 +605,7 @@ static PyObject *pycap_next_ex(PyObject *self, PyObject *args, PyObject *kwargs)
         data = Py_None;
     }
 
-    PyObject *result = PyStructSequence_New(&packetTupleWithStatusCodeTupleType);
+    PyObject* result = PyStructSequence_New(&packetTupleWithStatusCodeTupleType);
     PyTuple_SetItem(result, 0, PyLong_FromLong(status));
     PyTuple_SetItem(result, 1, data);
 
@@ -602,11 +615,11 @@ static PyObject *pycap_next_ex(PyObject *self, PyObject *args, PyObject *kwargs)
 // pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user)
 // callback functions
 // callback function stored
-PyObject *py_callback = NULL;
-PyObject *callback_args = NULL;
-void callback(PyObject *header, PyObject *packet)
+PyObject* py_callback = NULL;
+PyObject* callback_args = NULL;
+void callback(PyObject* header, PyObject* packet)
 {
-    PyObject *args = PyStructSequence_New(&argTupleType);
+    PyObject* args = PyStructSequence_New(&argTupleType);
     PyTuple_SetItem(args, 0, callback_args);
     PyTuple_SetItem(args, 1, header);
     PyTuple_SetItem(args, 2, packet);
@@ -619,10 +632,10 @@ void callback(PyObject *header, PyObject *packet)
     // Py_DECREF(py_callback);
     // Py_INCREF(Py_None);
 }
-void callback_function(u_char *user, const struct pcap_pkthdr *header, const u_char *packet)
+void callback_function(u_char* user, const struct pcap_pkthdr* header, const u_char* packet)
 {
-    PyObject *hdr = HeaderObject_New((struct pcap_pkthdr *)header);
-    PyObject *pckt;
+    PyObject* hdr = HeaderObject_New((struct pcap_pkthdr*)header);
+    PyObject* pckt;
     if (packet == NULL)
     {
         Py_INCREF(Py_None);
@@ -630,7 +643,7 @@ void callback_function(u_char *user, const struct pcap_pkthdr *header, const u_c
     }
     else
     {
-        pckt = Py_BuildValue("y#", (const char *)packet, header->len);
+        pckt = Py_BuildValue("y#", (const char*)packet, header->len);
     }
     Py_INCREF(pckt);
     Py_INCREF(hdr);
@@ -638,14 +651,15 @@ void callback_function(u_char *user, const struct pcap_pkthdr *header, const u_c
     Py_DECREF(pckt);
     Py_DECREF(hdr);
 }
-static PyObject *pycap_loop(PyObject *self, PyObject *args, PyObject *kwargs)
+static PyObject* pycap_loop(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-    static char *keywords[] = {"pcap", "callback", "args", "count", NULL};
+    static char* keywords[] = {"pcap", "callback", "args", "count", NULL};
     int cnt = -1; // negative value is loop forever
-    PyObject *user = NULL;
-    PyObject *func;
-    PcapObject *pcap;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|Oi", keywords, /* &PcapObjectType,*/ &pcap, &func, &user, &cnt))
+    PyObject* user = NULL;
+    PyObject* func;
+    PcapObject* pcap;
+    if (!PyArg_ParseTupleAndKeywords(
+            args, kwargs, "OO|Oi", keywords, /* &PcapObjectType,*/ &pcap, &func, &user, &cnt))
     {
         return NULL;
     }
@@ -675,14 +689,15 @@ static PyObject *pycap_loop(PyObject *self, PyObject *args, PyObject *kwargs)
 }
 
 // pcap_dispatch
-static PyObject *pycap_dispatch(PyObject *self, PyObject *args, PyObject *kwargs)
+static PyObject* pycap_dispatch(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-    static char *keywords[] = {"pcap", "callback", "args", "count", NULL};
+    static char* keywords[] = {"pcap", "callback", "args", "count", NULL};
     int cnt = -1; // negative value is loop forever
-    PyObject *user = NULL;
-    PyObject *func;
-    PcapObject *pcap;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|Oi", keywords, /* &PcapObjectType,*/ &pcap, &func, &user, &cnt))
+    PyObject* user = NULL;
+    PyObject* func;
+    PcapObject* pcap;
+    if (!PyArg_ParseTupleAndKeywords(
+            args, kwargs, "OO|Oi", keywords, /* &PcapObjectType,*/ &pcap, &func, &user, &cnt))
     {
         return NULL;
     }
@@ -712,9 +727,9 @@ static PyObject *pycap_dispatch(PyObject *self, PyObject *args, PyObject *kwargs
 }
 
 // pcap_setnonblock
-static PyObject *pycap_setnonblock(PyObject *self, PyObject *args)
+static PyObject* pycap_setnonblock(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     int nonblock = 1;
     char errbuf[PCAP_ERRBUF_SIZE];
     if (!PyArg_ParseTuple(args, "O!|p", &PcapObjectType, &pcap_obj, &nonblock))
@@ -729,15 +744,15 @@ static PyObject *pycap_setnonblock(PyObject *self, PyObject *args)
     if (Py_REFCNT(pcap_obj) > 1)
     {
         Py_INCREF(pcap_obj);
-        return (PyObject *)pcap_obj;
+        return (PyObject*)pcap_obj;
     }
     Py_RETURN_NONE;
 }
 
 // pcap_getnonblock
-static PyObject *pycap_getnonblock(PyObject *self, PyObject *args)
+static PyObject* pycap_getnonblock(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     char errbuf[PCAP_ERRBUF_SIZE];
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
     {
@@ -754,9 +769,9 @@ static PyObject *pycap_getnonblock(PyObject *self, PyObject *args)
 
 // pcap_set_datalink
 // returns boolean representing success or failure
-static PyObject *pycap_set_datalink(PyObject *self, PyObject *args)
+static PyObject* pycap_set_datalink(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     int dlt;
     if (!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &dlt))
     {
@@ -767,16 +782,25 @@ static PyObject *pycap_set_datalink(PyObject *self, PyObject *args)
 }
 
 // pcap_compile
-static PyObject *pycap_compile(PyObject *self, PyObject *args, PyObject *kwards)
+static PyObject* pycap_compile(PyObject* self, PyObject* args, PyObject* kwards)
 {
-    PcapObject *pcap_obj;
-    char *filter;
+    PcapObject* pcap_obj;
+    char* filter;
     int optimize = 0;
-    PyObject *optbool = Py_False;
+    PyObject* optbool = Py_False;
     bpf_u_int32 netmask;
-    struct bpf_program *fp = (struct bpf_program *)calloc(1, sizeof(struct bpf_program));
-    char *keywords[] = {"pcap", "filter", "netmask", "optimize", NULL};
-    if (!PyArg_ParseTupleAndKeywords(args, kwards, "O!si|O!", keywords, &PcapObjectType, &pcap_obj, &filter, &netmask, &PyBool_Type, &optimize))
+    struct bpf_program* fp = (struct bpf_program*)calloc(1, sizeof(struct bpf_program));
+    char* keywords[] = {"pcap", "filter", "netmask", "optimize", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args,
+                                     kwards,
+                                     "O!si|O!",
+                                     keywords,
+                                     &PcapObjectType,
+                                     &pcap_obj,
+                                     &filter,
+                                     &netmask,
+                                     &PyBool_Type,
+                                     &optimize))
     {
         return NULL;
     }
@@ -786,22 +810,31 @@ static PyObject *pycap_compile(PyObject *self, PyObject *args, PyObject *kwards)
         PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
         return NULL;
     }
-    PyObject *result = BpfProgramObject_New(fp);
+    PyObject* result = BpfProgramObject_New(fp);
     return result;
 }
 
 // pcap_compile_nopcap
-static PyObject *pycap_compile_nopcap(PyObject *self, PyObject *args, PyObject *kwards)
+static PyObject* pycap_compile_nopcap(PyObject* self, PyObject* args, PyObject* kwards)
 {
     int snaplen;
     int linktype;
-    char *filter;
+    char* filter;
     int optimize = 0;
-    PyObject *optbool = Py_False;
+    PyObject* optbool = Py_False;
     bpf_u_int32 netmask;
     struct bpf_program fp;
-    char *keywords[] = {"snaplen", "linktype", "filter", "netmask", "optimize", NULL};
-    if (!PyArg_ParseTupleAndKeywords(args, kwards, "O!si|O!", keywords, &snaplen, &linktype, &filter, &netmask, &PyBool_Type, &optimize))
+    char* keywords[] = {"snaplen", "linktype", "filter", "netmask", "optimize", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args,
+                                     kwards,
+                                     "O!si|O!",
+                                     keywords,
+                                     &snaplen,
+                                     &linktype,
+                                     &filter,
+                                     &netmask,
+                                     &PyBool_Type,
+                                     &optimize))
     {
         return NULL;
     }
@@ -811,16 +844,17 @@ static PyObject *pycap_compile_nopcap(PyObject *self, PyObject *args, PyObject *
         PyErr_SetString(PyExc_RuntimeError, "failed to compile to BPF filter");
         return NULL;
     }
-    PyObject *result = BpfProgramObject_New(&fp);
+    PyObject* result = BpfProgramObject_New(&fp);
     return result;
 }
 
 // pcap_setfilter
-static PyObject *pycap_setfilter(PyObject *self, PyObject *args)
+static PyObject* pycap_setfilter(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
-    BpfProgramObject *bpf_obj;
-    if (!PyArg_ParseTuple(args, "O!O!", &PcapObjectType, &pcap_obj, &BpfProgramObjectType, &bpf_obj))
+    PcapObject* pcap_obj;
+    BpfProgramObject* bpf_obj;
+    if (!PyArg_ParseTuple(
+            args, "O!O!", &PcapObjectType, &pcap_obj, &BpfProgramObjectType, &bpf_obj))
     {
         return NULL;
     }
@@ -832,15 +866,15 @@ static PyObject *pycap_setfilter(PyObject *self, PyObject *args)
     if (Py_REFCNT(pcap_obj) > 1)
     {
         Py_INCREF(pcap_obj);
-        return (PyObject *)pcap_obj;
+        return (PyObject*)pcap_obj;
     }
     Py_RETURN_NONE;
 }
 
 // pcap_freecode
-static PyObject *pycap_freecode(PyObject *self, PyObject *args)
+static PyObject* pycap_freecode(PyObject* self, PyObject* args)
 {
-    BpfProgramObject *bpf_obj;
+    BpfProgramObject* bpf_obj;
     if (!PyArg_ParseTuple(args, "O!", &BpfProgramObjectType, &bpf_obj))
     {
         return NULL;
@@ -851,9 +885,9 @@ static PyObject *pycap_freecode(PyObject *self, PyObject *args)
 }
 
 // pcap_breakloop
-static PyObject *pycap_breakloop(PyObject *self, PyObject *args)
+static PyObject* pycap_breakloop(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
     {
         return NULL;
@@ -863,9 +897,9 @@ static PyObject *pycap_breakloop(PyObject *self, PyObject *args)
 }
 
 // pcap_fileno
-static PyObject *pycap_fileno(PyObject *self, PyObject *args)
+static PyObject* pycap_fileno(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
     {
         return NULL;
@@ -879,9 +913,9 @@ static PyObject *pycap_fileno(PyObject *self, PyObject *args)
     return PyLong_FromLong(result);
 }
 // pcap_close
-static PyObject *pycap_close(PyObject *self, PyObject *args)
+static PyObject* pycap_close(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
     {
         return NULL;
@@ -890,12 +924,12 @@ static PyObject *pycap_close(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 // pcap_open_dead
-static PyObject *pycap_open_dead(PyObject *self, PyObject *args, PyObject *kwargs)
+static PyObject* pycap_open_dead(PyObject* self, PyObject* args, PyObject* kwargs)
 {
-    char *keywords[] = {"linktype", "snaplen", NULL};
+    char* keywords[] = {"linktype", "snaplen", NULL};
     int linktype;
     int snaplen;
-    pcap_t *pcap;
+    pcap_t* pcap;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii", keywords, &linktype, &snaplen))
     {
         return NULL;
@@ -905,15 +939,15 @@ static PyObject *pycap_open_dead(PyObject *self, PyObject *args, PyObject *kwarg
     {
         Py_RETURN_NONE;
     }
-    PyObject *result = PcapObject_New(pcap);
+    PyObject* result = PcapObject_New(pcap);
     return result;
 }
 
 /* Status Functions */
 // pcap_datalink
-static PyObject *pycap_datalink(PyObject *self, PyObject *args)
+static PyObject* pycap_datalink(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
         return NULL;
     int dlt = pcap_datalink(pcap_obj->pcap);
@@ -926,10 +960,10 @@ static PyObject *pycap_datalink(PyObject *self, PyObject *args)
 }
 
 // pcap_list_datalinks
-static PyObject *pycap_list_datalinks(PyObject *self, PyObject *args)
+static PyObject* pycap_list_datalinks(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
-    int *dlt_buf;
+    PcapObject* pcap_obj;
+    int* dlt_buf;
     int len;
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
         return NULL;
@@ -939,7 +973,7 @@ static PyObject *pycap_list_datalinks(PyObject *self, PyObject *args)
         PyErr_SetString(PyExc_RuntimeError, "coulud not find data types supported by the device");
         return NULL;
     }
-    PyObject *list = PyList_New(len);
+    PyObject* list = PyList_New(len);
     for (int i = 0; i < len; i++)
     {
         PyList_SetItem(list, i, PyLong_FromLong(dlt_buf[i]));
@@ -948,9 +982,9 @@ static PyObject *pycap_list_datalinks(PyObject *self, PyObject *args)
 }
 
 // pcap_snapshot
-static PyObject *pycap_snapshot(PyObject *self, PyObject *args)
+static PyObject* pycap_snapshot(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
         return NULL;
     int num_of_bytes = pcap_snapshot(pcap_obj->pcap);
@@ -958,9 +992,9 @@ static PyObject *pycap_snapshot(PyObject *self, PyObject *args)
 }
 
 // pcap_stats
-static PyObject *pycap_stats(PyObject *self, PyObject *args)
+static PyObject* pycap_stats(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     struct pcap_stat stat;
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
         return NULL;
@@ -969,23 +1003,25 @@ static PyObject *pycap_stats(PyObject *self, PyObject *args)
         PyErr_SetString(PyExc_RuntimeError, "Error collecting stats");
         return NULL;
     }
-    PyObject *result = PcapStatObject_New(&stat);
+    PyObject* result = PcapStatObject_New(&stat);
     return result;
 }
 
 // pcap_lib_version
-static PyObject *pycap_lib_version(PyObject *self, PyObject *args)
+static PyObject* pycap_lib_version(PyObject* self, PyObject* args)
 {
-    const char *version = pcap_lib_version();
-    PyObject *vlib = PyUnicode_FromString(version);
-    PyObject *thisv = PyUnicode_FromString(THIS_VERSION);
-    PyUnicode_AppendAndDel(&vlib, thisv); // refer to https://github.com/python/cpython/blob/main/Objects/unicodeobject.c
+    const char* version = pcap_lib_version();
+    PyObject* vlib = PyUnicode_FromString(version);
+    PyObject* thisv = PyUnicode_FromString(THIS_VERSION);
+    PyUnicode_AppendAndDel(
+        &vlib,
+        thisv); // refer to https://github.com/python/cpython/blob/main/Objects/unicodeobject.c
     return vlib;
 }
 // pcap_datalink_name_to_val
-static PyObject *pycap_datalink_name_to_val(PyObject *self, PyObject *args)
+static PyObject* pycap_datalink_name_to_val(PyObject* self, PyObject* args)
 {
-    const char *name;
+    const char* name;
     if (!PyArg_ParseTuple(args, "s", &name))
     {
         return NULL;
@@ -1000,13 +1036,13 @@ static PyObject *pycap_datalink_name_to_val(PyObject *self, PyObject *args)
 }
 
 // pcap_datalink_val_to_name
-static PyObject *pycap_datalink_val_to_name(PyObject *self, PyObject *args)
+static PyObject* pycap_datalink_val_to_name(PyObject* self, PyObject* args)
 {
     int dlt;
     if (!PyArg_ParseTuple(args, "i", &dlt))
         return NULL;
 
-    const char *name = pcap_datalink_val_to_name(dlt);
+    const char* name = pcap_datalink_val_to_name(dlt);
 
     if (name == NULL)
     {
@@ -1016,12 +1052,12 @@ static PyObject *pycap_datalink_val_to_name(PyObject *self, PyObject *args)
     return PyUnicode_FromString(name);
 }
 // pcap_datalink_val_to_description
-static PyObject *pycap_datalink_val_to_description(PyObject *self, PyObject *args)
+static PyObject* pycap_datalink_val_to_description(PyObject* self, PyObject* args)
 {
     int dlt;
     if (!PyArg_ParseTuple(args, "i", &dlt))
         return NULL;
-    const char *desc = pcap_datalink_val_to_description(dlt);
+    const char* desc = pcap_datalink_val_to_description(dlt);
     if (desc == NULL)
     {
         // PyErr_WarnEx(PyExc_Warning, "could not grab description for the datalink value", 1);
@@ -1032,34 +1068,34 @@ static PyObject *pycap_datalink_val_to_description(PyObject *self, PyObject *arg
 
 /* error handling functions*/
 // pcap_geterr
-static PyObject *pycap_geterr(PyObject *self, PyObject *args)
+static PyObject* pycap_geterr(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
     {
         return NULL;
     }
-    char *errbuf = pcap_geterr(pcap_obj->pcap);
+    char* errbuf = pcap_geterr(pcap_obj->pcap);
     return PyUnicode_FromString(errbuf);
 }
 
 // pcap_strerror
-static PyObject *pycap_strerror(PyObject *self, PyObject *args)
+static PyObject* pycap_strerror(PyObject* self, PyObject* args)
 {
     int error;
     if (!PyArg_ParseTuple(args, "i", &error))
     {
         return NULL;
     }
-    const char *msg = pcap_strerror(error);
+    const char* msg = pcap_strerror(error);
     return PyUnicode_FromString(msg);
 }
 
 // pcap_perror
-static PyObject *pycap_perror(PyObject *self, PyObject *args)
+static PyObject* pycap_perror(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
-    char *prefix;
+    PcapObject* pcap_obj;
+    char* prefix;
     if (!PyArg_ParseTuple(args, "O!s", &PcapObjectType, &pcap_obj, &prefix))
     {
         return NULL;
@@ -1071,11 +1107,11 @@ static PyObject *pycap_perror(PyObject *self, PyObject *args)
 /* pcap setting funcitons */
 
 // pcap_create
-static PyObject *pycap_create(PyObject *self, PyObject *args)
+static PyObject* pycap_create(PyObject* self, PyObject* args)
 {
     char errbuf[PCAP_ERRBUF_SIZE];
-    pcap_t *pcap;
-    const char *source = NULL;
+    pcap_t* pcap;
+    const char* source = NULL;
     if (!PyArg_ParseTuple(args, "|s", &source))
     {
         return NULL;
@@ -1089,9 +1125,9 @@ static PyObject *pycap_create(PyObject *self, PyObject *args)
     return PcapObject_New(pcap);
 }
 // pcap_activate
-static PyObject *pycap_activate(PyObject *self, PyObject *args)
+static PyObject* pycap_activate(PyObject* self, PyObject* args)
 {
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     int result;
     if (!PyArg_ParseTuple(args, "O!", &PcapObjectType, &pcap_obj))
     {
@@ -1111,7 +1147,7 @@ static PyObject *pycap_activate(PyObject *self, PyObject *args)
     if (Py_REFCNT(pcap_obj) > 1)
     {
         Py_INCREF(pcap_obj);
-        return (PyObject *)pcap_obj;
+        return (PyObject*)pcap_obj;
     }
     Py_RETURN_NONE;
 }
@@ -1119,10 +1155,10 @@ static PyObject *pycap_activate(PyObject *self, PyObject *args)
 /* pcap set functions */
 // need to be refactored
 // pcap_set_snaplen
-static PyObject *pycap_set_snaplen(PyObject *self, PyObject *args)
+static PyObject* pycap_set_snaplen(PyObject* self, PyObject* args)
 {
     int snaplen;
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &snaplen))
     {
         return NULL;
@@ -1135,15 +1171,15 @@ static PyObject *pycap_set_snaplen(PyObject *self, PyObject *args)
     if (Py_REFCNT(pcap_obj) > 1)
     {
         Py_INCREF(pcap_obj);
-        return (PyObject *)pcap_obj;
+        return (PyObject*)pcap_obj;
     }
     Py_RETURN_NONE;
 }
 // pcap_set_promisc
-static PyObject *pycap_set_promisc(PyObject *self, PyObject *args)
+static PyObject* pycap_set_promisc(PyObject* self, PyObject* args)
 {
     int promisc;
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &promisc))
     {
         return NULL;
@@ -1156,15 +1192,15 @@ static PyObject *pycap_set_promisc(PyObject *self, PyObject *args)
     if (Py_REFCNT(pcap_obj) > 1)
     {
         Py_INCREF(pcap_obj);
-        return (PyObject *)pcap_obj;
+        return (PyObject*)pcap_obj;
     }
     Py_RETURN_NONE;
 }
 // pcap_set_protocol_linux
-static PyObject *pycap_set_protocol_linux(PyObject *self, PyObject *args)
+static PyObject* pycap_set_protocol_linux(PyObject* self, PyObject* args)
 {
     int protocol;
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &protocol))
     {
         return NULL;
@@ -1177,15 +1213,15 @@ static PyObject *pycap_set_protocol_linux(PyObject *self, PyObject *args)
     if (Py_REFCNT(pcap_obj) > 1)
     {
         Py_INCREF(pcap_obj);
-        return (PyObject *)pcap_obj;
+        return (PyObject*)pcap_obj;
     }
     Py_RETURN_NONE;
 }
 // pcap_set_rfmon
-static PyObject *pycap_set_rfmon(PyObject *self, PyObject *args)
+static PyObject* pycap_set_rfmon(PyObject* self, PyObject* args)
 {
     int rfmon;
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &rfmon))
     {
         return NULL;
@@ -1198,15 +1234,15 @@ static PyObject *pycap_set_rfmon(PyObject *self, PyObject *args)
     if (Py_REFCNT(pcap_obj) > 1)
     {
         Py_INCREF(pcap_obj);
-        return (PyObject *)pcap_obj;
+        return (PyObject*)pcap_obj;
     }
     Py_RETURN_NONE;
 }
 // pcap_set_timeout
-static PyObject *pycap_set_timeout(PyObject *self, PyObject *args)
+static PyObject* pycap_set_timeout(PyObject* self, PyObject* args)
 {
     int timeout;
-    PcapObject *pcap_obj;
+    PcapObject* pcap_obj;
     if (!PyArg_ParseTuple(args, "O!i", &PcapObjectType, &pcap_obj, &timeout))
     {
         return NULL;
@@ -1219,7 +1255,7 @@ static PyObject *pycap_set_timeout(PyObject *self, PyObject *args)
     if (Py_REFCNT(pcap_obj) > 1)
     {
         Py_INCREF(pcap_obj);
-        return (PyObject *)pcap_obj;
+        return (PyObject*)pcap_obj;
     }
     Py_RETURN_NONE;
 }
@@ -1233,18 +1269,33 @@ static PyMethodDef PcapMethods[] = {
     {"findalldevs", pycap_findalldevs, METH_VARARGS, "pcap_findalldevs wrapper"},
     {"lookupnet", pycap_lookupnet, METH_VARARGS, "pcap_lookupnet wrapper"},
     /* packet capture functions */
-    {"open_live", (PyCFunction)pycap_open_live, METH_VARARGS | METH_KEYWORDS, "pcap_open_live wrapper"},
-    {"open_offline", (PyCFunction)pycap_open_offline, METH_VARARGS | METH_KEYWORDS, "pcap_open_offline wrapper"},
-    {"open_offline_with_tstamp_precision", (PyCFunction)pycap_open_offline_with_tstamp_precision, METH_VARARGS | METH_KEYWORDS, "pcap_open_offline_with_tstamp_precision wrapper"},
+    {"open_live",
+     (PyCFunction)pycap_open_live,
+     METH_VARARGS | METH_KEYWORDS,
+     "pcap_open_live wrapper"},
+    {"open_offline",
+     (PyCFunction)pycap_open_offline,
+     METH_VARARGS | METH_KEYWORDS,
+     "pcap_open_offline wrapper"},
+    {"open_offline_with_tstamp_precision",
+     (PyCFunction)pycap_open_offline_with_tstamp_precision,
+     METH_VARARGS | METH_KEYWORDS,
+     "pcap_open_offline_with_tstamp_precision wrapper"},
     {"next", (PyCFunction)pycap_next, METH_VARARGS | METH_KEYWORDS, "pcap_next wrapper"},
     {"next_ex", (PyCFunction)pycap_next_ex, METH_VARARGS | METH_KEYWORDS, "pcap_next_ex wrapper"},
     {"loop", (PyCFunction)pycap_loop, METH_VARARGS | METH_KEYWORDS, "pcap_loop wrapper"},
-    {"dispatch", (PyCFunction)pycap_dispatch, METH_VARARGS | METH_KEYWORDS, "pcap_dispatch wrapper"},
+    {"dispatch",
+     (PyCFunction)pycap_dispatch,
+     METH_VARARGS | METH_KEYWORDS,
+     "pcap_dispatch wrapper"},
     {"setnonblock", pycap_setnonblock, METH_VARARGS, "pcap_setnonblock wrapper"},
     {"getnonblock", pycap_getnonblock, METH_VARARGS, "pcap_getnonblock wrapper"},
     {"set_datalink", pycap_set_datalink, METH_VARARGS, "pcap_set_datalink wrapper"},
     {"compile", (PyCFunction)pycap_compile, METH_VARARGS | METH_KEYWORDS, "pcap_compile wrapper"},
-    {"compile_nopcap", (PyCFunction)pycap_compile_nopcap, METH_VARARGS | METH_KEYWORDS, "pcap_compile_nopcap wrapper"},
+    {"compile_nopcap",
+     (PyCFunction)pycap_compile_nopcap,
+     METH_VARARGS | METH_KEYWORDS,
+     "pcap_compile_nopcap wrapper"},
     {"setfilter", pycap_setfilter, METH_VARARGS, "pcap_setfilter wrapper"},
     {"freecode", pycap_freecode, METH_VARARGS, "pcap_freecode wrapper"},
     {"breakloop", pycap_breakloop, METH_VARARGS, "pcap_breakloop wrapper"},
@@ -1257,9 +1308,18 @@ static PyMethodDef PcapMethods[] = {
     {"snapshot", pycap_snapshot, METH_VARARGS, "pcap_snapshot wrapper"},
     {"stats", pycap_stats, METH_VARARGS, "pcap_stats wrapper"},
     {"lib_version", pycap_lib_version, METH_VARARGS, "pcap_lib_version wrappper"},
-    {"datalink_name_to_val", pycap_datalink_name_to_val, METH_VARARGS, "pcap_datalink_name_to_val wrapper"},
-    {"datalink_val_to_name", pycap_datalink_val_to_name, METH_VARARGS, "pcap_datalink_val_to_name wrapper"},
-    {"datalink_val_to_description", pycap_datalink_val_to_description, METH_VARARGS, "pcap_datalink_val_to_description wrapper"},
+    {"datalink_name_to_val",
+     pycap_datalink_name_to_val,
+     METH_VARARGS,
+     "pcap_datalink_name_to_val wrapper"},
+    {"datalink_val_to_name",
+     pycap_datalink_val_to_name,
+     METH_VARARGS,
+     "pcap_datalink_val_to_name wrapper"},
+    {"datalink_val_to_description",
+     pycap_datalink_val_to_description,
+     METH_VARARGS,
+     "pcap_datalink_val_to_description wrapper"},
     /* error handling fuctions */
     {"geterr", pycap_geterr, METH_VARARGS, "pcap_geterr wrapper"},
     {"strerror", pycap_strerror, METH_VARARGS, "pcap_strerror wrapper"},
@@ -1270,7 +1330,10 @@ static PyMethodDef PcapMethods[] = {
     /* pcap set functions */
     {"set_snaplen", pycap_set_snaplen, METH_VARARGS, "pcap_set_snaplen wrapper"},
     {"set_promisc", pycap_set_promisc, METH_VARARGS, "pcap_set_promisc wrapper"},
-    {"set_protocol_linux", pycap_set_protocol_linux, METH_VARARGS, "pcap_set_protocol_linux wrapper"},
+    {"set_protocol_linux",
+     pycap_set_protocol_linux,
+     METH_VARARGS,
+     "pcap_set_protocol_linux wrapper"},
     {"set_rfmon", pycap_set_rfmon, METH_VARARGS, "pcap_set_rfmon wrapper"},
     {"set_timeout", pycap_set_timeout, METH_VARARGS, "pcap_set_timeout wrapper"},
     {NULL, NULL, 0, NULL}};
@@ -1303,11 +1366,12 @@ PyMODINIT_FUNC PyInit__pcap(void)
         return NULL;
     if (PyStructSequence_InitType2(&argTupleType, &argTupleDesc) < 0)
         return NULL;
-    if (PyStructSequence_InitType2(&packetTupleWithStatusCodeTupleType, &packetTupleWithStatusCodeTupleDesc) < 0)
+    if (PyStructSequence_InitType2(&packetTupleWithStatusCodeTupleType,
+                                   &packetTupleWithStatusCodeTupleDesc) < 0)
         return NULL;
 
     // module initialization
-    PyObject *module = PyModule_Create(&pcapmodule);
+    PyObject* module = PyModule_Create(&pcapmodule);
     if (module == NULL)
         return NULL;
     return module;

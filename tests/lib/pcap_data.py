@@ -1,5 +1,6 @@
 import struct
 
+
 def make_one_packet_pcap() -> bytes:
     """
     Generate a minimal PCAP (pcap, not pcapng) containing exactly 1 Ethernet frame.
@@ -15,8 +16,7 @@ def make_one_packet_pcap() -> bytes:
     frame = (
         b"\xaa\xbb\xcc\xdd\xee\xff"  # dst
         b"\x11\x22\x33\x44\x55\x66"  # src
-        b"\x08\x00"                  # ethertype: IPv4
-        + b"\x00" * 46               # payload/padding
+        b"\x08\x00" + b"\x00" * 46  # ethertype: IPv4  # payload/padding
     )
 
     # Per-packet record header: ts_sec, ts_usec, incl_len, orig_len
