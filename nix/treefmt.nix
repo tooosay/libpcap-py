@@ -12,6 +12,7 @@
     "scripts/*"
   ];
   programs.shfmt.excludes = [
+    "archived/*"
     "*.py"
     "*.js"
     "*.mjs"
@@ -27,5 +28,9 @@
     "archived/*"
     "dist/*"
     "build/*"
+  ];
+
+  programs.ruff-format.excludes = [
+    "archived/*"
   ];
 }
