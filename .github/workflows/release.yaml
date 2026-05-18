@@ -125,6 +125,11 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: "build.yaml",
-              ref: tag,
+              ref: "main",
               inputs: { tag },
             });
+            
+      - name: No release needed
+        if: steps.decide.outputs.should_tag != 'true'
+        run: |
+          echo "Release skipped: tag already exists or version is not newer."
