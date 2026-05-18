@@ -61,8 +61,8 @@ lint-nix:
     deadnix -f .
     statix check .
 
-lint-ruff:
-    ruff check .
+lint-ruff *ARGS:
+    ruff check . {{ARGS}}
 
 lint-clang nproc="4": tidy-configure
     run-clang-tidy -p build-clang -j {{nproc}}

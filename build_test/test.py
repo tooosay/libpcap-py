@@ -1,4 +1,9 @@
-import os, sys, subprocess
+import os
+import subprocess
+import sys
+import time
+
+import libpcap_py as p
 
 
 def ensure_root():
@@ -11,9 +16,6 @@ def ensure_root():
 
 
 ensure_root()
-
-import libpcap_py as p
-import time
 
 filter_exp = "tcp"
 device = p.lookupdev()
@@ -30,6 +32,7 @@ p.setfilter(pcap, filter_program)
 def callback(arg):
     x = arg.args[0]
     y = arg.args[1]
+    print(x,y)
     header = arg.header
     packet = arg.packet
     print(time.ctime(header.tv_sec))

@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 import os
+from pathlib import Path
+
 import pytest
 from lib.pcap_data import make_one_packet_pcap
-from pathlib import Path
 
 
 def _flag_enabled(name: str) -> bool:
