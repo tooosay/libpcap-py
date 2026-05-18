@@ -32,7 +32,6 @@
       in {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
-            python310
             libpcap
             libpcap.lib
             uv
@@ -55,7 +54,7 @@
           UV_PROJECT_ENVIRONMENT = ".venv";
 
           shellHook = ''
-            echo ${pkgs.python310.version} > .python-version
+            echo "3.10.20" > .python-version
             ${commonShellHook}
           '';
         };
