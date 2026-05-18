@@ -53,6 +53,20 @@ clean-all: guard-project-root clean-uv
 uv:
     UV_NO_CACHE=1 UV_NO_EDITABLE=1 UV_PROJECT_ENVIRONMENT={{ project_root }}/.venv uv sync
 
+tidy-configure:
+  meson setup build-clang -Dbuildtype=debug || meson setup --reconfigure build-clang -Dbuildtype=debug
+  ninja -C build-clang
+
+lint-nix:
+    deadnix -f .
+    statix check .
+
+lint-ruff:
+    ruff check .
+
+lint-clang nproc="4": tidy-configure
+    run-clang-tidy -p build-clang -j {{nproc}}
+
 vc-current PY="3.10": guard-project-root
     #!/usr/bin/env bash
     set -euo pipefail

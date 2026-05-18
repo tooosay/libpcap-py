@@ -1,0 +1,19 @@
+name: lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [nix, ruff, clang]
+    steps:
+      - uses: ./github/actions/setup-nix
+
+      - run: nix develop -c just lint-${{ matrix.target }}

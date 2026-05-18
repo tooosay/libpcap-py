@@ -1,0 +1,24 @@
+name: ruff version parity
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ruff-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/setup-nix
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: uv sync
+        run: uv sync --frozen --dev
+
+      - name: Compare ruff versions (nix vs uv)
+        run: |
+          set -euo pipefail
+          nix_ver="$(nix develop -c ruff --version 2>/dev/null | awk '{print $2}')"
+          uv_ver="$(uv run ruff --version 2>/dev/null | awk '{print $2}')"
+          [[ "${nix_ver}" == "${uv_ver}" ]] || (echo "mismatch nix=${nix_ver} uv=${uv_ver}" && exit 1)

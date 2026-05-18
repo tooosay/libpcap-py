@@ -15,6 +15,34 @@ dependencies = [
 requires = ["meson-python"]
 build-backend = "mesonpy"
 
+[tool.ruff]
+line-length = 125
+target-version = "py312"
+
+exclude = [
+  ".git",
+  ".venv",
+  "venv",
+  "build",
+  "dist",
+  "cfg",
+  ".github",
+  "scripts",
+  "out",
+  "__pypackages__",
+  ".mypy_cache",
+  ".pytest_cache",
+  ".ruff_cache",
+  "archived",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"] 
+
 [tool.pytest]
 minversion = "9.0"
 addopts = ["-ra", "-v"]

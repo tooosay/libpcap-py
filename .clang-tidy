@@ -1,0 +1,18 @@
+UseColor: true
+
+Checks: >-
+  clang-analyzer-*,
+  bugprone-*,
+  portability-*,
+  misc-*,
+  -misc-unused-parameters,
+  -bugprone-reserved-identifier,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions
+
+
+WarningsAsErrors: ''
+
+HeaderFilterRegex: '^(src|include)/'
+
+FormatStyle: file
