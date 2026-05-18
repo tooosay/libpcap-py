@@ -10,6 +10,6 @@ jobs:
   nix-fmt-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./github/actions/setup-nix
+      - uses: ./.github/actions/setup-nix
       - name: Nix checks (includes formatting if wired via treefmt-nix)
         run: nix flake check
