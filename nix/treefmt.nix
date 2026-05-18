@@ -1,36 +1,46 @@
 {
   projectRootFile = "flake.nix";
 
-  programs.alejandra.enable = true;
-  programs.ruff-format.enable = true;
-  programs.clang-format.enable = true;
-  programs.shfmt.enable = true;
+  programs = {
+    alejandra.enable = true;
 
-  programs.shfmt.includes = [
-    "*.sh"
-    "*.bash"
-    "scripts/*"
-  ];
-  programs.shfmt.excludes = [
-    "archived/*"
-    "*.py"
-    "*.js"
-    "*.mjs"
-    "*.cjs"
-    "*.ts"
-  ];
+    shfmt = {
+      enable = true;
 
-  programs.clang-format.includes = [
-    "*.c"
-    "*.h"
-  ];
-  programs.clang-format.excludes = [
-    "archived/*"
-    "dist/*"
-    "build/*"
-  ];
+      includes = [
+        "*.sh"
+        "*.bash"
+        "scripts/*"
+      ];
+      excludes = [
+        "archived/*"
+        "*.py"
+        "*.js"
+        "*.mjs"
+        "*.cjs"
+        "*.ts"
+      ];
+    };
 
-  programs.ruff-format.excludes = [
-    "archived/*"
-  ];
+    clang-format = {
+      enable = true;
+
+      includes = [
+        "*.c"
+        "*.h"
+      ];
+      excludes = [
+        "archived/*"
+        "dist/*"
+        "build/*"
+      ];
+    };
+
+    ruff-format = {
+      enable = true;
+      excludes = [
+        "archived/*"
+      ];
+    };
+  };
 }

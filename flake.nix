@@ -23,14 +23,7 @@
         "aarch64-darwin"
         "x86_64-darwin"
       ];
-      perSystem = {
-        config,
-        self',
-        inputs',
-        pkgs,
-        system,
-        ...
-      }: let
+      perSystem = {pkgs, ...}: let
         commonShellHook = ''
           if command -v starship >/dev/null 2>&1; then
             eval "$(starship init bash)"
@@ -51,6 +44,8 @@
             ruff
             clang-tools
             libclang
+            deadnix
+            statix
           ];
 
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.libpcap];
