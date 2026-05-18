@@ -17,7 +17,7 @@ build-backend = "mesonpy"
 
 [tool.ruff]
 line-length = 125
-target-version = "py312"
+target-version = "py310"
 
 exclude = [
   ".git",
