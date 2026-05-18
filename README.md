@@ -2,6 +2,12 @@
 <h1>
 libpcap-py
 </h1>
+
+[![Ruff version parity](https://github.com/tooosay/libpcap-py/actions/workflows/ruff-version.yaml/badge.svg)](https://github.com/tooosay/libpcap-py/actions/workflows/ruff-version.yaml)
+[![Format](https://github.com/tooosay/libpcap-py/actions/workflows/format.yaml/badge.svg)](https://github.com/tooosay/libpcap-py/actions/workflows/format.yaml)
+[![Lint](https://github.com/tooosay/libpcap-py/actions/workflows/lint.yaml/badge.svg)](https://github.com/tooosay/libpcap-py/actions/workflows/lint.yaml)
+[![Build](https://github.com/tooosay/libpcap-py/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/tooosay/libpcap-py/actions/workflows/build.yaml)
+ 
 </div>
 
 #### Project status
