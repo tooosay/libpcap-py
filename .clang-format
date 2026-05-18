@@ -1,0 +1,42 @@
+BasedOnStyle: LLVM
+
+# 文字幅/インデント
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+ContinuationIndentWidth: 4
+
+# 括弧/ブレース
+BreakBeforeBraces: Allman
+SpaceBeforeParens: ControlStatements
+Cpp11BracedListStyle: true
+
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: InlineOnly
+
+BinPackArguments: false
+BinPackParameters: false
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# include
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+
+# コメント
+ReflowComments: true
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 1
+
+# switch/case とプリプロセッサ
+IndentCaseLabels: true
+IndentPPDirectives: None
+
+# 空行
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
