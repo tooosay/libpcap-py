@@ -1,0 +1,60 @@
+name: Smoke Build
+description: PR only build -- 3.10 and 3.14
+on:
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smokebuild-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-wheel:
+    name: Smoke wheel / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.14"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix
+
+      - name: Install Python
+        run: nix develop -c uv python install ${{ matrix.python-version }}
+
+      - name: Sync dependencies
+        run: nix develop -c uv sync --frozen --dev
+        env:
+          UV_PYTHON: ${{ matrix.python-version }}
+
+      - name: Check build environment
+        run: |
+          nix develop -c uv run python --version
+          nix develop -c uv --version
+          nix develop -c pkg-config --cflags --libs libpcap
+        env:
+          UV_PYTHON: ${{ matrix.python-version }}
+
+      - name: Ruff check
+        run: nix develop -c uv run ruff check .
+        env:
+          UV_PYTHON: ${{ matrix.python-version }}
+
+      - name: Ruff format check
+        run: nix develop -c uv run ruff format --check .
+        env:
+          UV_PYTHON: ${{ matrix.python-version }}
+
+      - name: Smoke build wheel
+        run: nix develop -c uv build --wheel
+        env:
+          UV_PYTHON: ${{ matrix.python-version }}

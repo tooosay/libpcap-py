@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pyproject.toml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tag_and_dispatch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags
+        run: git fetch --tags --force
+
+      - name: Read version from pyproject.toml
+        id: ver
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(
+            grep -A20 "^\[project\]" pyproject.toml \
+              | grep -E '^[[:space:]]*version[[:space:]]*=' \
+              | head -n 1 \
+              | cut -d '=' -f 2 \
+              | xargs
+          )"
+
+          version="${version%\"}"
+          version="${version#\"}"
+
+          if [ -z "${version}" ]; then
+            echo "could not find version under [project] in pyproject.toml" >&2
+            exit 1
+          fi
+
+          tag="v${version}"
+
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Decide whether to tag
+        id: decide
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${{ steps.ver.outputs.tag }}"
+
+          if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null; then
+            echo "should_tag=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          latest_tag="$(git tag -l 'v*' --sort=v:refname | tail -n 1 || true)"
+
+          if [ -z "${latest_tag}" ]; then
+            echo "should_tag=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          new_ver="${tag#v}"
+          old_ver="${latest_tag#v}"
+
+          top="$(printf "%s\n%s\n" "${new_ver}" "${old_ver}" | sort -V | tail -n 1)"
+
+          if [ "${top}" = "${new_ver}" ] && [ "${new_ver}" != "${old_ver}" ]; then
+            echo "should_tag=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_tag=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create and push tag
+        if: steps.decide.outputs.should_tag == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${{ steps.ver.outputs.tag }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git tag -a "${tag}" -m "Release ${tag}"
+          git push origin "${tag}"
+
+      - name: Create draft GitHub Release
+        if: steps.decide.outputs.should_tag == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${{ steps.ver.outputs.tag }}"
+
+          gh release create "${tag}" \
+            --draft \
+            --generate-notes
+
+      - name: Dispatch build workflow
+        if: steps.decide.outputs.should_tag == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = "${{ steps.ver.outputs.tag }}";
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "build.yaml",
+              ref: tag,
+              inputs: { tag },
+            });

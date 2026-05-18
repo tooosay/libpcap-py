@@ -1,4 +1,4 @@
-name: ruff version parity
+name: Ruff version parity
 
 on:
   pull_request:

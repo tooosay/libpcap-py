@@ -1,4 +1,4 @@
-name: setup-nix
+name: Setup Nix
 runs:
   using: composite
   steps:
