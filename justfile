@@ -107,3 +107,9 @@ vc-rm-current: guard-project-root
     fi
 
     echo "${target} not found"
+
+bump part="patch": guard-project-root
+    "{{project_root}}/scripts/bump-version.py" {{part}}
+
+build-matrix: guard-project-root
+    "{{project_root}}/scripts/build-local-matrix.sh"

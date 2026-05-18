@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
 versions=("3.10" "3.11" "3.12" "3.13")
 
 uv python install "${versions[@]}"

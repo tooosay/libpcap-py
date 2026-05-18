@@ -1,7 +1,10 @@
+# build otupts
 build/
 *.backup
 *.org
 dist/
+artifacts/
+*.egg-info/
 
 # python
 .venv
