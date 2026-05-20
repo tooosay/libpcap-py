@@ -81,7 +81,7 @@ jobs:
           UV_PYTHON: ${{ matrix.python-version }}
 
       - name: Upload wheel artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-py${{ matrix.python-version }}
           path: dist/*.whl
@@ -111,7 +111,7 @@ jobs:
           nix develop -c uv build --sdist
 
       - name: Upload sdist artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: sdist
           path: dist/*.tar.gz
