@@ -1205,7 +1205,7 @@ static PyObject* pycap_set_protocol_linux(PyObject* self, PyObject* args)
     {
         return NULL;
     }
-    if (pcap_set_promisc(pcap_obj->pcap, protocol) != 0)
+    if (pcap_set_protocol_linux(pcap_obj->pcap, protocol) != 0)
     {
         PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
         return NULL;
@@ -1226,7 +1226,7 @@ static PyObject* pycap_set_rfmon(PyObject* self, PyObject* args)
     {
         return NULL;
     }
-    if (pcap_set_promisc(pcap_obj->pcap, rfmon) != 0)
+    if (pcap_set_rfmon(pcap_obj->pcap, rfmon) != 0)
     {
         PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
         return NULL;
@@ -1247,7 +1247,7 @@ static PyObject* pycap_set_timeout(PyObject* self, PyObject* args)
     {
         return NULL;
     }
-    if (pcap_set_promisc(pcap_obj->pcap, timeout) != 0)
+    if (pcap_set_timeout(pcap_obj->pcap, timeout) != 0)
     {
         PyErr_SetString(PyExc_RuntimeError, pcap_geterr(pcap_obj->pcap));
         return NULL;
