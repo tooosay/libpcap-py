@@ -19,6 +19,7 @@
         "*.mjs"
         "*.cjs"
         "*.ts"
+        "pycap_methods.inc"
       ];
     };
 
@@ -33,6 +34,7 @@
         "archived/*"
         "dist/*"
         "build/*"
+        "pycap_methods.inc"
       ];
     };
 
@@ -40,6 +42,7 @@
       enable = true;
       excludes = [
         "archived/*"
+        "pycap_methods.inc"
       ];
     };
   };
