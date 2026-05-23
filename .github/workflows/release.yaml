@@ -20,6 +20,81 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Wait for Lint and Format to pass
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const sha = context.sha;
+            const maxWait = 20 * 60 * 1000;
+            const interval = 30 * 1000;
+            const start = Date.now();
+
+            const targetPaths = [
+              '.github/workflows/lint.yaml',
+              '.github/workflows/format.yaml',
+            ];
+
+            const { data: { workflows } } = await github.rest.actions.listRepoWorkflows({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const targetIds = workflows
+              .filter(w => targetPaths.includes(w.path))
+              .map(w => w.id);
+
+            if (targetIds.length === 0) {
+              core.info('No matching CI workflows found — skipping gate.');
+              return;
+            }
+
+            const { data: { workflow_runs: initial } } = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: sha,
+              per_page: 50,
+            });
+
+            if (!initial.some(r => targetIds.includes(r.workflow_id))) {
+              core.info('No Lint or Format runs found for this SHA — skipping CI gate.');
+              return;
+            }
+
+            while (Date.now() - start < maxWait) {
+              const { data: { workflow_runs } } = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                head_sha: sha,
+                per_page: 50,
+              });
+
+              const relevant = workflow_runs.filter(r => targetIds.includes(r.workflow_id));
+
+              const allPassed = targetIds.every(id =>
+                relevant.some(r => r.workflow_id === id && r.conclusion === 'success')
+              );
+
+              const anyFailed = relevant.some(r =>
+                ['failure', 'cancelled', 'timed_out'].includes(r.conclusion)
+              );
+
+              if (allPassed) {
+                core.info('All CI checks passed.');
+                return;
+              }
+
+              if (anyFailed) {
+                core.setFailed('One or more CI checks failed — aborting release.');
+                return;
+              }
+
+              const elapsed = Math.round((Date.now() - start) / 1000);
+              core.info(`Waiting for CI checks... (${elapsed}s elapsed)`);
+              await new Promise(r => setTimeout(r, interval));
+            }
+
+            core.setFailed('Timed out waiting for CI checks.');
+
       - name: Checkout full
         uses: actions/checkout@v6
         with:
@@ -128,7 +203,7 @@ jobs:
               ref: "main",
               inputs: { tag },
             });
-            
+
       - name: No release needed
         if: steps.decide.outputs.should_tag != 'true'
         run: |
