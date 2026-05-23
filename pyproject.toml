@@ -1,6 +1,6 @@
 [project]
 name = "libpcap-py"
-version = "0.3.2"
+version = "0.3.3"
 description = "libpcap python wrapper"
 readme = "README.md"
 authors = [
@@ -59,6 +59,7 @@ markers = [
 
 [dependency-groups]
 dev = [
+    "clang>=21.1.7",
     "meson-python>=0.19.0",
     "pytest>=9.0.2",
     "pytest-cov>=7.0.0",

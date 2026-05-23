@@ -73,6 +73,7 @@
 #include <Python.h>
 #include <structmember.h>
 // #include <python3.10/object.h>
+#include "registerfuncmacro.h"
 #include <pcap.h>
 
 /* type declaration */
@@ -306,6 +307,11 @@ static PyTypeObject lookupnetTupleType;
 static PyTypeObject packetTupleType;
 static PyTypeObject argTupleType;
 static PyTypeObject packetTupleWithStatusCodeTupleType;
+
+/* Forward declarations */
+#define X(kind, name, doc) DECLARE_PYCAP_METHOD(kind, name, doc)
+#include "../inclcude/pycap_methods.inc"
+#undef X
 
 /* Methods */
 /* lookupfunctions */
@@ -1261,81 +1267,10 @@ static PyObject* pycap_set_timeout(PyObject* self, PyObject* args)
 }
 /* template */
 
-// enumerate function on method table
 static PyMethodDef PcapMethods[] = {
-    /* {"func_name_py", func_name, METH_VARARGS or METH_VARARGS|METH_KEYWORDS ,"description"} */
-    /* lookup functions */
-    {"lookupdev", pycap_lookupdev, METH_VARARGS, "pcap_lookupdev wrapper"},
-    {"findalldevs", pycap_findalldevs, METH_VARARGS, "pcap_findalldevs wrapper"},
-    {"lookupnet", pycap_lookupnet, METH_VARARGS, "pcap_lookupnet wrapper"},
-    /* packet capture functions */
-    {"open_live",
-     (PyCFunction)pycap_open_live,
-     METH_VARARGS | METH_KEYWORDS,
-     "pcap_open_live wrapper"},
-    {"open_offline",
-     (PyCFunction)pycap_open_offline,
-     METH_VARARGS | METH_KEYWORDS,
-     "pcap_open_offline wrapper"},
-    {"open_offline_with_tstamp_precision",
-     (PyCFunction)pycap_open_offline_with_tstamp_precision,
-     METH_VARARGS | METH_KEYWORDS,
-     "pcap_open_offline_with_tstamp_precision wrapper"},
-    {"next", (PyCFunction)pycap_next, METH_VARARGS | METH_KEYWORDS, "pcap_next wrapper"},
-    {"next_ex", (PyCFunction)pycap_next_ex, METH_VARARGS | METH_KEYWORDS, "pcap_next_ex wrapper"},
-    {"loop", (PyCFunction)pycap_loop, METH_VARARGS | METH_KEYWORDS, "pcap_loop wrapper"},
-    {"dispatch",
-     (PyCFunction)pycap_dispatch,
-     METH_VARARGS | METH_KEYWORDS,
-     "pcap_dispatch wrapper"},
-    {"setnonblock", pycap_setnonblock, METH_VARARGS, "pcap_setnonblock wrapper"},
-    {"getnonblock", pycap_getnonblock, METH_VARARGS, "pcap_getnonblock wrapper"},
-    {"set_datalink", pycap_set_datalink, METH_VARARGS, "pcap_set_datalink wrapper"},
-    {"compile", (PyCFunction)pycap_compile, METH_VARARGS | METH_KEYWORDS, "pcap_compile wrapper"},
-    {"compile_nopcap",
-     (PyCFunction)pycap_compile_nopcap,
-     METH_VARARGS | METH_KEYWORDS,
-     "pcap_compile_nopcap wrapper"},
-    {"setfilter", pycap_setfilter, METH_VARARGS, "pcap_setfilter wrapper"},
-    {"freecode", pycap_freecode, METH_VARARGS, "pcap_freecode wrapper"},
-    {"breakloop", pycap_breakloop, METH_VARARGS, "pcap_breakloop wrapper"},
-    {"fileno", pycap_fileno, METH_VARARGS, "pcap_fileno wrapper"},
-    {"close", pycap_close, METH_VARARGS, "pcap_close wrapper"},
-    {"open_dead", (PyCFunction)pycap_open_dead, METH_VARARGS, "pcap_open_dead wrapper"},
-    /* status functions */
-    {"datalink", pycap_datalink, METH_VARARGS, "pcap_datalink wrapper"},
-    {"list_datalinks", pycap_list_datalinks, METH_VARARGS, "pcap_list_datalinks wrapper"},
-    {"snapshot", pycap_snapshot, METH_VARARGS, "pcap_snapshot wrapper"},
-    {"stats", pycap_stats, METH_VARARGS, "pcap_stats wrapper"},
-    {"lib_version", pycap_lib_version, METH_VARARGS, "pcap_lib_version wrappper"},
-    {"datalink_name_to_val",
-     pycap_datalink_name_to_val,
-     METH_VARARGS,
-     "pcap_datalink_name_to_val wrapper"},
-    {"datalink_val_to_name",
-     pycap_datalink_val_to_name,
-     METH_VARARGS,
-     "pcap_datalink_val_to_name wrapper"},
-    {"datalink_val_to_description",
-     pycap_datalink_val_to_description,
-     METH_VARARGS,
-     "pcap_datalink_val_to_description wrapper"},
-    /* error handling fuctions */
-    {"geterr", pycap_geterr, METH_VARARGS, "pcap_geterr wrapper"},
-    {"strerror", pycap_strerror, METH_VARARGS, "pcap_strerror wrapper"},
-    {"perror", pycap_perror, METH_VARARGS, "pcap_perror wrapper"},
-    /* pcap setting functions */
-    {"create", pycap_create, METH_VARARGS, "pcap_create wrapper"},
-    {"activate", pycap_activate, METH_VARARGS, "pcap_activate wrapper"},
-    /* pcap set functions */
-    {"set_snaplen", pycap_set_snaplen, METH_VARARGS, "pcap_set_snaplen wrapper"},
-    {"set_promisc", pycap_set_promisc, METH_VARARGS, "pcap_set_promisc wrapper"},
-    {"set_protocol_linux",
-     pycap_set_protocol_linux,
-     METH_VARARGS,
-     "pcap_set_protocol_linux wrapper"},
-    {"set_rfmon", pycap_set_rfmon, METH_VARARGS, "pcap_set_rfmon wrapper"},
-    {"set_timeout", pycap_set_timeout, METH_VARARGS, "pcap_set_timeout wrapper"},
+#define X(kind, name, doc) REGISTER_PYCAP_METHOD(kind, name, doc)
+#include "../inclcude/pycap_methods.inc"
+#undef X
     {NULL, NULL, 0, NULL}};
 
 // module defeinition
