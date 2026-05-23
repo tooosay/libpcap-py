@@ -52,7 +52,7 @@
           LIBCLANG_PATH = (pkgs.lib.makeLibraryPath [pkgs.libclang]) + "/libclang.so";
 
           # for tools
-          LIBC_INCLUDE_DIR = (pkgs.glibc.dev) + "/include";
+          LIBC_INCLUDE_DIR = pkgs.glibc.dev + "/include";
 
           UV_NO_EDITABLE = 1;
           UV_NO_CACHE = 1;
