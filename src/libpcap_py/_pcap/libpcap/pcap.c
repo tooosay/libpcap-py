@@ -70,10 +70,8 @@
 #define THIS_VERSION " python wrapper version 0.3.0"
 #define THIS_MODULE_NAME "_pcap"
 #define PY_SSIZE_T_CLEAN
-#include <Python.h>
-#include <structmember.h>
-// #include <python3.10/object.h>
 #include "registerfuncmacro.h"
+#include <Python.h>
 #include <pcap.h>
 
 /* type declaration */
@@ -131,10 +129,10 @@ typedef struct
     PyObject* caplen;
 } HeaderObject;
 static PyMemberDef HeaderObject_members[] = {
-    {"tv_sec", T_OBJECT_EX, offsetof(HeaderObject, tv_sec), 0, "timestamp second"},
-    {"tv_usec", T_OBJECT_EX, offsetof(HeaderObject, tv_usec), 0, "timestamp microsecond"},
-    {"len", T_OBJECT_EX, offsetof(HeaderObject, len), 0, "packet length"},
-    {"caplen", T_OBJECT_EX, offsetof(HeaderObject, caplen), 0, "proportional length"},
+    {"tv_sec", Py_T_OBJECT_EX, offsetof(HeaderObject, tv_sec), 0, "timestamp second"},
+    {"tv_usec", Py_T_OBJECT_EX, offsetof(HeaderObject, tv_usec), 0, "timestamp microsecond"},
+    {"len", Py_T_OBJECT_EX, offsetof(HeaderObject, len), 0, "packet length"},
+    {"caplen", Py_T_OBJECT_EX, offsetof(HeaderObject, caplen), 0, "proportional length"},
     {NULL} /* Sentinel */
 };
 
@@ -166,11 +164,12 @@ static PyObject* HeaderObject_New(struct pcap_pkthdr* header)
 static void HeaderObject_dealloc(PyObject* self)
 {
     HeaderObject* tp = (HeaderObject*)self;
+
     Py_TYPE(tp)->tp_free(tp->tv_sec);
     Py_TYPE(tp)->tp_free(tp->tv_usec);
     Py_TYPE(tp)->tp_free(tp->caplen);
     Py_TYPE(tp)->tp_free(tp->len);
-    Py_TYPE(tp)->tp_free((PyObject*)tp);
+    Py_TYPE(tp)->tp_free(self);
 }
 
 typedef struct
@@ -186,24 +185,24 @@ typedef struct
 } PcapStatObject;
 
 static PyMemberDef PcapStat_members[] = {
-    {"recv", T_UINT, offsetof(PcapStatObject, recv), READONLY, "Number of packets received"},
-    {"drop", T_UINT, offsetof(PcapStatObject, drop), READONLY, "Number of packets dropped"},
-    {"ifdrop", T_UINT, offsetof(PcapStatObject, ifdrop), READONLY, "Drops by interface"},
+    {"recv", Py_T_UINT, offsetof(PcapStatObject, recv), Py_READONLY, "Number of packets received"},
+    {"drop", Py_T_UINT, offsetof(PcapStatObject, drop), Py_READONLY, "Number of packets dropped"},
+    {"ifdrop", Py_T_UINT, offsetof(PcapStatObject, ifdrop), Py_READONLY, "Drops by interface"},
 #ifdef _WIN32
     {"capt",
-     T_UINT,
+     Py_T_UINT,
      offsetof(PcapStatObject, capt),
-     READONLY,
+     Py_READONLY,
      "Number of packets that reach the application"},
     {"sent",
-     T_UINT,
+     Py_T_UINT,
      offsetof(PcapStatObject, sent),
-     READONLY,
+     Py_READONLY,
      "Number of packets sent by the server on the network"},
     {"netdrop",
-     T_UINT,
+     Py_T_UINT,
      offsetof(PcapStatObject, netdrop),
-     READONLY,
+     Py_READONLY,
      "Number of packets lost on the network"},
 #endif
     {NULL}};
