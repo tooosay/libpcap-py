@@ -27,7 +27,7 @@ def emit_x(func: dict[str, Any]) -> str:
     kind = infer_kind(func)
     doc = f"{c_name} wrapper"
 
-    return f'X({kind}, {name}, "{doc}")'
+    return f'X(0, {kind}, {name}, "{doc}")'
 
 
 def load_functions_from_stdin() -> list[dict[str, Any]]:

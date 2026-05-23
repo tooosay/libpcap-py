@@ -309,8 +309,8 @@ static PyTypeObject argTupleType;
 static PyTypeObject packetTupleWithStatusCodeTupleType;
 
 /* Forward declarations */
-#define X(kind, name, doc) DECLARE_PYCAP_METHOD(kind, name, doc)
-#include "../inclcude/pycap_methods.inc"
+#define X(impl, kind, name, doc) DECLARE_PYCAP_METHOD(impl, kind, name, doc)
+#include "../include/pycap_methods.inc"
 #undef X
 
 /* Methods */
@@ -1268,8 +1268,8 @@ static PyObject* pycap_set_timeout(PyObject* self, PyObject* args)
 /* template */
 
 static PyMethodDef PcapMethods[] = {
-#define X(kind, name, doc) REGISTER_PYCAP_METHOD(kind, name, doc)
-#include "../inclcude/pycap_methods.inc"
+#define X(impl, kind, name, doc) REGISTER_PYCAP_METHOD(impl, kind, name, doc)
+#include "../include/pycap_methods.inc"
 #undef X
     {NULL, NULL, 0, NULL}};
 
