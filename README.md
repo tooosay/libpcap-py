@@ -27,6 +27,20 @@ libpcap-py
 ![Static Badge](https://img.shields.io/badge/platform-Linux-blue)
 
 <details>
+<summary>:snake:pip from github (recommended)</summary>
+
+
+```sh
+pip install git+ssh://git@github.com:tooosay/libpcap-py.git@${tag}
+```
+eg.
+
+```sh
+pip install git+ssh://git@github.com:tooosay/libpcap-py.git@v0.3.4
+```
+</details>
+
+<details>
 <summary>:muscle:self-build (just + uv) (recommended)</summary>
 
 ##### step 1
