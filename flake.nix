@@ -29,6 +29,7 @@
             eval "$(starship init bash)"
           fi
         '';
+        PY_VERSION = "3.12.13";
       in {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
@@ -59,7 +60,19 @@
           UV_PROJECT_ENVIRONMENT = ".venv";
 
           shellHook = ''
-            echo "3.10.20" > .python-version
+            version1=""
+            finalVersion="${PY_VERSION}"
+            if [ ! -f .python-version ]; then
+               version1=$finalVersion
+            else
+               version1="$(cat .python-version)"
+            fi
+            if [  "$(printf '%s\n%s' "$version1" "${PY_VERSION}" | sort -V | head -n1)" != "${PY_VERSION}" ]; then
+              echo "update PY_VERSION in flake.nix"
+              finalVERSION=$version1
+            fi
+
+            echo "''${finalVersion}" > .python-version
             ${commonShellHook}
           '';
         };
