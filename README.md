@@ -2,7 +2,8 @@
 <h1>
 libpcap-py
 </h1>
-
+ 
+[![ASAN Test](https://github.com/tooosay/libpcap-py/actions/workflows/asan-test.yaml/badge.svg)](https://github.com/tooosay/libpcap-py/actions/workflows/asan-test.yaml)
 [![Ruff version parity](https://github.com/tooosay/libpcap-py/actions/workflows/ruff-version.yaml/badge.svg)](https://github.com/tooosay/libpcap-py/actions/workflows/ruff-version.yaml)
 [![Format](https://github.com/tooosay/libpcap-py/actions/workflows/format.yaml/badge.svg)](https://github.com/tooosay/libpcap-py/actions/workflows/format.yaml)
 [![Lint](https://github.com/tooosay/libpcap-py/actions/workflows/lint.yaml/badge.svg)](https://github.com/tooosay/libpcap-py/actions/workflows/lint.yaml)
