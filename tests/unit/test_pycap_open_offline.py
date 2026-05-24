@@ -15,7 +15,6 @@ def test_repeated_open_close(one_packet_pcap_path, repeat):
     gc.collect()
 
 
-
 def test_many_open_handles(one_packet_pcap_path, repeat):
     path = str(one_packet_pcap_path)
 

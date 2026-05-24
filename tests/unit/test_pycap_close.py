@@ -12,11 +12,13 @@ def test_repeated_close(one_packet_pcap_path, repeat):
 
     gc.collect()
 
+
 def test_use_handle_after_close(one_packet_pcap_path):
     path = str(one_packet_pcap_path)
     pc = p.open_offline(path)
     p.close(pc)
     p.next(pc)
+
 
 def test_use_handle_after_close_ex(one_packet_pcap_path):
     path = str(one_packet_pcap_path)
@@ -24,9 +26,11 @@ def test_use_handle_after_close_ex(one_packet_pcap_path):
     p.close(pc)
     p.next_ex(pc)
 
+
 def test_close_none():
     with pytest.raises(TypeError):
         p.close(None)
+
 
 def test_close_del(one_packet_pcap_path):
     path = str(one_packet_pcap_path)
