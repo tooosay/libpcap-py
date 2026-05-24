@@ -46,10 +46,10 @@ uninstall:
 test *ARGS:
     uv run pytest -m "not online" --pycap-repeat=100 {{ ARGS }}
 
-test-asan: install-asan
+test-asan repeat="10000": install-asan
     LD_PRELOAD="$(gcc -print-file-name=libasan.so)" \
     ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 \
-    uv run pytest --pycap-repeat=10000
+    uv run pytest --pycap-repeat={{ repeat }}
 
 build-test:
     uv run python -u {{ project_root }}/build_test/test.py

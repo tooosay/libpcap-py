@@ -1,0 +1,33 @@
+name: ASAN Test
+description: Run pytest with AddressSanitizer
+on:
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: asan-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  asan-test:
+    name: ASAN Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix
+
+      - name: Install Python
+        run: nix develop -c uv python install
+
+      - name: Sync dependencies
+        run: nix develop -c uv sync --frozen --dev
+
+      - name: Build and run ASAN test
+        run: nix develop -c just test-asan 100
