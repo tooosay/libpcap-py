@@ -51,6 +51,11 @@ test-asan repeat="10000": install-asan
     ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 \
     uv run pytest --pycap-repeat={{ repeat }}
 
+asan-test name: install-asan
+    LD_PRELOAD="$(gcc -print-file-name=libasan.so)" \
+    ASAN_OPTIONS="detect_leaks=1:abort_on_error=1:symbolize=1:fast_unwind_on_malloc=0" \
+    uv run pytest {{ name }} -q
+
 test-empty: install-asan
     LD_PRELOAD="$(gcc -print-file-name=libasan.so)" \
     ASAN_OPTIONS=detect_leaks=1:abort_on_error=1:symbolize=1:fast_unwind_on_malloc=0 \
