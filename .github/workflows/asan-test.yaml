@@ -14,6 +14,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  empty-test:
+    name: Empty test
+     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Nix
+        uses: ./.github/actions/setup-nix
+
+      - name: Install Python
+        run: nix develop -c uv python install
+
+      - name: Sync dependencies
+        run: nix develop -c uv sync --frozen --dev
+
+      - name: Build and run empty testt
+        run: nix develop -c just test-empt
+
   asan-test:
     name: ASAN Test
     runs-on: ubuntu-latest
