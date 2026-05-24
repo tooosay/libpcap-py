@@ -19,16 +19,16 @@ libpcap-py
 ## What's this?
 [libpcap](https://www.tcpdump.org/) Python binding
 
-## :pray:Prerequisite
+## Prerequisite
  * Python >= 3.10
  * libpcap >= 1.10
  
-## :running:Installation
+## Installation
 
 ![Static Badge](https://img.shields.io/badge/platform-Linux-blue)
 
 <details>
-<summary>:snake:pip from github (recommended)</summary>
+<summary> pip from github (recommended)</summary>
 
 
 ```sh
@@ -42,7 +42,7 @@ pip install git+ssh://git@github.com:tooosay/libpcap-py.git@v0.3.4
 </details>
 
 <details>
-<summary>:muscle:self-build (just + uv) (recommended)</summary>
+<summary> self-build (just + uv) (recommended)</summary>
 
 ##### step 1
 install dependencies:
@@ -67,7 +67,7 @@ just test
 ```
 </details>
 <details>
-<summary>:muscle:self-build (uv)</summary>
+<summary> self-build (uv)</summary>
 
 ##### step 1
 install dependencies:
@@ -90,7 +90,7 @@ uv run pytest
 </details>
 
 
-## :construction: Supported Functions [39/74][53%]
+## Supported Functions [39/74][53%]
 - [X] pcap_create
 - [X] pcap_activate
 - [X] pcap_findalldevs
@@ -166,6 +166,6 @@ uv run pytest
 - [X] pcap_strerror
 - [X] pcap_perror
 
-## :oden:LICENSE
+## LICENSE
 [3-clause BSD License](https://opensource.org/license/bsd-3-clause/)
 
