@@ -1,6 +1,8 @@
-import libpcap_py as p
-import pytest
 import gc
+
+import pytest
+
+import libpcap_py as p
 
 
 def test_repeated_close(one_packet_pcap_path, repeat):

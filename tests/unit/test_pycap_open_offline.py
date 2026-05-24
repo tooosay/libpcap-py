@@ -1,5 +1,6 @@
-import libpcap_py as p
 import gc
+
+import libpcap_py as p
 
 
 def test_repeated_open_close(one_packet_pcap_path, repeat):
