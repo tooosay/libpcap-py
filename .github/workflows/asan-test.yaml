@@ -32,7 +32,7 @@ jobs:
         run: nix develop -c uv sync --frozen --dev
 
       - name: Build and run empty testt
-        run: nix develop -c just test-empt
+        run: nix develop -c just test-empty
 
   asan-test:
     name: ASAN Test
