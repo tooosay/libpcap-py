@@ -16,7 +16,7 @@ concurrency:
 jobs:
   empty-test:
     name: Empty test
-     runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -31,7 +31,7 @@ jobs:
       - name: Sync dependencies
         run: nix develop -c uv sync --frozen --dev
 
-      - name: Build and run empty testt
+      - name: Build and run empty test
         run: nix develop -c just test-empty
 
   asan-test:
