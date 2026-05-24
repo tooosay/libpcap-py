@@ -25,17 +25,31 @@ default:
 build:
     uv run python -m build
 
+build-asan: guard-project-root
+    rm -rf {{ project_root }}/dist
+    uv run python -m build --wheel \
+    	-Csetup-args="-Db_sanitize=address,undefined" \
+    	-Csetup-args="-Dbuildtype=debugoptimized"
+
 build-libpcap:
     uv run python -m build -w -Csetup-args=-Dpcap_backend=libpcap
 
 install:
     uv pip install --force-reinstall {{ project_root }}/dist/*.whl --python {{ project_root }}/.venv
 
+install-asan: build-asan
+    uv pip install --force-reinstall --no-deps {{ project_root }}/dist/*.whl --python {{ project_root }}/.venv
+
 uninstall:
     uv pip uninstall {{ python_module_name }}
 
 test *ARGS:
-    uv run pytest -m "not online" {{ ARGS }}
+    uv run pytest -m "not online" --pycap-repeat=100 {{ ARGS }}
+
+test-asan: install-asan
+    LD_PRELOAD="$(gcc -print-file-name=libasan.so)" \
+    ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 \
+    uv run pytest --pycap-repeat=10000
 
 build-test:
     uv run python -u {{ project_root }}/build_test/test.py
@@ -54,18 +68,18 @@ uv:
     UV_NO_CACHE=1 UV_NO_EDITABLE=1 UV_PROJECT_ENVIRONMENT={{ project_root }}/.venv uv sync
 
 tidy-configure:
-  meson setup build-clang -Dbuildtype=debug || meson setup --reconfigure build-clang -Dbuildtype=debug
-  ninja -C build-clang
+    meson setup build-clang -Dbuildtype=debug || meson setup --reconfigure build-clang -Dbuildtype=debug
+    ninja -C build-clang
 
 lint-nix:
     deadnix -f .
     statix check .
 
 lint-ruff *ARGS:
-    ruff check . {{ARGS}}
+    ruff check . {{ ARGS }}
 
 lint-clang nproc="4": tidy-configure
-    run-clang-tidy -p build-clang -j {{nproc}}
+    run-clang-tidy -p build-clang -j {{ nproc }}
 
 vc-current PY="3.10": guard-project-root
     #!/usr/bin/env bash
@@ -109,7 +123,7 @@ vc-rm-current: guard-project-root
     echo "${target} not found"
 
 bump part="patch": guard-project-root
-    "{{project_root}}/scripts/bump-version.py" {{part}}
+    "{{ project_root }}/scripts/bump-version.py" {{ part }}
 
 build-matrix: guard-project-root
-    "{{project_root}}/scripts/build-local-matrix.sh"
+    "{{ project_root }}/scripts/build-local-matrix.sh"
