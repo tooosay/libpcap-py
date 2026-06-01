@@ -82,7 +82,7 @@ typedef struct
     PyObject_HEAD pcap_t* pcap;
 } PcapObject;
 
-static void PcapObject_dealloc(PyObject* self);
+static void Pcap_dealloc(PcapObject* self);
 // define PcapObject
 static PyTypeObject PcapObjectType = {
     PyVarObject_HEAD_INIT(NULL, 0).tp_name = "pcap_t",
@@ -92,7 +92,7 @@ static PyTypeObject PcapObjectType = {
     .tp_new = PyType_GenericNew,
     .tp_alloc = PyType_GenericAlloc,
     .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_dealloc = PcapObject_dealloc,
+    .tp_dealloc = (destructor)Pcap_dealloc,
 };
 
 static PyObject* PcapObject_New(pcap_t* pcap)
@@ -113,11 +113,10 @@ void _close_once(PcapObject* tp)
     }
 }
 
-static void PcapObject_dealloc(PyObject* self)
+static void Pcap_dealloc(PcapObject* self)
 {
-    PcapObject* tp = (PcapObject*)self;
-    _close_once(tp);
-    Py_TYPE(tp)->tp_free((PyObject*)tp);
+    _close_once(self);
+    Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 typedef struct
@@ -137,7 +136,7 @@ static PyMemberDef HeaderObject_members[] = {
     {NULL} /* Sentinel */
 };
 
-static void HeaderObject_dealloc(PyObject* self);
+static void Header_dealloc(HeaderObject* self);
 static PyTypeObject HeaderObjectType = {
     PyVarObject_HEAD_INIT(NULL, 0).tp_name = "packetHeader",
     .tp_doc = "pcap_pkhdr struct wrapper",
@@ -146,7 +145,7 @@ static PyTypeObject HeaderObjectType = {
     .tp_new = PyType_GenericNew,
     .tp_alloc = PyType_GenericAlloc,
     .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_dealloc = HeaderObject_dealloc,
+    .tp_dealloc = (destructor)Header_dealloc,
     .tp_members = HeaderObject_members,
 };
 
@@ -162,15 +161,13 @@ static PyObject* HeaderObject_New(struct pcap_pkthdr* header)
     return (PyObject*)obj;
 }
 
-static void HeaderObject_dealloc(PyObject* self)
+static void Header_dealloc(HeaderObject* self)
 {
-    HeaderObject* tp = (HeaderObject*)self;
-
-    Py_TYPE(tp)->tp_free(tp->tv_sec);
-    Py_TYPE(tp)->tp_free(tp->tv_usec);
-    Py_TYPE(tp)->tp_free(tp->caplen);
-    Py_TYPE(tp)->tp_free(tp->len);
-    Py_TYPE(tp)->tp_free(self);
+    Py_XDECREF(self->tv_sec);
+    Py_XDECREF(self->tv_usec);
+    Py_XDECREF(self->caplen);
+    Py_XDECREF(self->len);
+    Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 typedef struct
