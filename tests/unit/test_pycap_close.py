@@ -1,6 +1,7 @@
 import gc
 
 import pytest
+from hypothesis import given, strategies as st
 
 import libpcap_py as p
 
@@ -31,9 +32,10 @@ def test_use_handle_after_close_ex_raises_value_error(one_packet_pcap_path):
         p.next_ex(pc)
 
 
-def test_close_none_raises_type_error():
+@given(st.one_of(st.none(), st.integers(), st.text(), st.binary()))
+def test_close_rejects_non_pcap_object(x):
     with pytest.raises(TypeError):
-        p.close(None)
+        p.close(x)
 
 
 def test_del_without_close(one_packet_pcap_path):
@@ -41,6 +43,7 @@ def test_del_without_close(one_packet_pcap_path):
     pc = p.open_offline(path)
     del pc
     gc.collect()
+
 
 def test_del_after_close(one_packet_pcap_path):
     path = str(one_packet_pcap_path)
