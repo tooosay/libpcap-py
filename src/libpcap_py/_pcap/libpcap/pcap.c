@@ -106,6 +106,10 @@ static PyObject* PcapObject_New(pcap_t* pcap)
 
 void _close_once(PcapObject* tp)
 {
+    if (!tp)
+    {
+        return;
+    }
     if (tp->pcap != NULL)
     {
         pcap_close(tp->pcap);
@@ -309,6 +313,17 @@ static PyTypeObject packetTupleWithStatusCodeTupleType;
 #define X(impl, kind, name, doc) DECLARE_PYCAP_METHOD(impl, kind, name, doc)
 #include "../include/pycap_methods.inc"
 #undef X
+
+static bool PcapObject_is_open(PcapObject* pcap)
+{
+    if (pcap->pcap == NULL)
+    {
+        PyErr_SetString(PyExc_ValueError, "pcap handle is closed");
+        return false;
+    }
+
+    return true;
+}
 
 /* Methods */
 /* lookupfunctions */
@@ -525,7 +540,10 @@ static PyObject* pycap_next(PyObject* self, PyObject* args, PyObject* kwargs)
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!", keywords, &PcapObjectType, &pcap))
         return NULL;
-
+    if (!PcapObject_is_open(pcap))
+    {
+        return NULL;
+    }
     const char* packet = (const char*)pcap_next(pcap->pcap, &h);
     if (!packet)
     {
@@ -559,6 +577,11 @@ static PyObject* pycap_next_ex(PyObject* self, PyObject* args, PyObject* kwargs)
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O!", keywords, &PcapObjectType, &pcap))
         return NULL;
+
+    if (!PcapObject_is_open(pcap))
+    {
+        return NULL;
+    }
 
     /*
      * Return codes for pcap_read() are:
@@ -671,6 +694,10 @@ static PyObject* pycap_loop(PyObject* self, PyObject* args, PyObject* kwargs)
         PyErr_SetString(PyExc_TypeError, "parameter must be callable");
         return NULL;
     }
+    if (!PcapObject_is_open(pcap))
+    {
+        return NULL;
+    }
     Py_XINCREF(func);
     // Py_XDECREF(py_callback);
     py_callback = func;
@@ -707,6 +734,10 @@ static PyObject* pycap_dispatch(PyObject* self, PyObject* args, PyObject* kwargs
     if (!PyCallable_Check(func))
     {
         PyErr_SetString(PyExc_TypeError, "parameter must be callable");
+        return NULL;
+    }
+    if (!PcapObject_is_open(pcap))
+    {
         return NULL;
     }
     Py_XINCREF(func);
