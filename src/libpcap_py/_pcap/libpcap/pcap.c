@@ -73,6 +73,7 @@
 #include "registerfuncmacro.h"
 #include <Python.h>
 #include <pcap.h>
+#include <stdbool.h>
 #include <stddef.h>
 
 /* type declaration */
