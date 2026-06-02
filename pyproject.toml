@@ -1,6 +1,6 @@
 [project]
 name = "libpcap-py"
-version = "0.3.5"
+version = "0.3.6"
 description = "libpcap python wrapper"
 readme = "README.md"
 authors = [
