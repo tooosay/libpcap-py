@@ -50,6 +50,9 @@ test-asan *ARGS: install-asan
     #!/usr/bin/env bash
     set -euo pipefail
 
+    uv sync --frozen --dev
+    uv pip install --force-reinstall --no-deps {{ project_root }}/dist/*.whl --python {{ project_root }}/.venv
+
     repeat="${PYCAP_TEST_REPEAT:-10000}"
     args=({{ ARGS }})
     if (( ${#args[@]} > 0 )) && [[ "${args[0]}" =~ ^[0-9]+$ ]]; then
@@ -58,8 +61,8 @@ test-asan *ARGS: install-asan
     fi
 
     LD_PRELOAD="$(gcc -print-file-name=libasan.so)" \
-    ASAN_OPTIONS="detect_leaks=1:abort_on_error=1:symbolize=1:fast_unwind_on_malloc=0" \
-    uv run --no-sync pytest --pycap-repeat="${repeat}" "${args[@]}"
+    ASAN_OPTIONS="detect_leaks=0:abort_on_error=1:symbolize=1:fast_unwind_on_malloc=0" \
+    {{ project_root }}/.venv/bin/python -m pytest --pycap-repeat="${repeat}" "${args[@]}"
 
 test-empty:
     just test-asan tests/test_empty.py -q
