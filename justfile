@@ -46,20 +46,23 @@ uninstall:
 test *ARGS:
     uv run pytest -m "not online" --pycap-repeat=100 {{ ARGS }}
 
-test-asan repeat="10000": install-asan
-    LD_PRELOAD="$(gcc -print-file-name=libasan.so)" \
-    ASAN_OPTIONS=detect_leaks=1:abort_on_error=1 \
-    uv run pytest --pycap-repeat={{ repeat }}
+test-asan *ARGS: install-asan
+    #!/usr/bin/env bash
+    set -euo pipefail
 
-asan-test name: install-asan
+    repeat="${PYCAP_TEST_REPEAT:-10000}"
+    args=({{ ARGS }})
+    if (( ${#args[@]} > 0 )) && [[ "${args[0]}" =~ ^[0-9]+$ ]]; then
+        repeat="${args[0]}"
+        args=("${args[@]:1}")
+    fi
+
     LD_PRELOAD="$(gcc -print-file-name=libasan.so)" \
     ASAN_OPTIONS="detect_leaks=1:abort_on_error=1:symbolize=1:fast_unwind_on_malloc=0" \
-    uv run pytest {{ name }} -q
+    uv run --no-sync pytest --pycap-repeat="${repeat}" "${args[@]}"
 
-test-empty: install-asan
-    LD_PRELOAD="$(gcc -print-file-name=libasan.so)" \
-    ASAN_OPTIONS=detect_leaks=1:abort_on_error=1:symbolize=1:fast_unwind_on_malloc=0 \
-    uv run pytest tests/test_empty.py
+test-empty:
+    just test-asan tests/test_empty.py -q
 
 build-test:
     uv run python -u {{ project_root }}/build_test/test.py

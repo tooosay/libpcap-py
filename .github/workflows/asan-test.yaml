@@ -52,4 +52,4 @@ jobs:
         run: nix develop -c uv sync --frozen --dev
 
       - name: Build and run ASAN test
-        run: nix develop -c just test-asan 100
+        run: nix develop -c env PYCAP_TEST_REPEAT=100 just test-asan
