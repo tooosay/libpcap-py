@@ -97,6 +97,9 @@ lint-ruff *ARGS:
 lint-clang nproc="4": tidy-configure
     run-clang-tidy -p build-clang -j {{ nproc }}
 
+lint-readme-functions: guard-project-root
+    python3 "{{ project_root }}/scripts/check-readme-functions.py"
+
 vc-current PY="3.10": guard-project-root
     #!/usr/bin/env bash
     set -euo pipefail

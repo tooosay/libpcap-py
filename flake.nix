@@ -35,6 +35,7 @@
           packages = with pkgs; [
             libpcap
             libpcap.lib
+            python3
             uv
             ninja
             meson

@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [nix, ruff, clang]
+        target: [nix, ruff, clang, readme-functions]
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-nix
