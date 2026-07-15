@@ -25,9 +25,6 @@ jobs:
       - name: Setup Nix
         uses: ./.github/actions/setup-nix
 
-      - name: Install Python
-        run: nix develop -c uv python install
-
       - name: Sync dependencies
         run: nix develop -c uv sync --frozen --dev
 
@@ -44,9 +41,6 @@ jobs:
 
       - name: Setup Nix
         uses: ./.github/actions/setup-nix
-
-      - name: Install Python
-        run: nix develop -c uv python install
 
       - name: Sync dependencies
         run: nix develop -c uv sync --frozen --dev
