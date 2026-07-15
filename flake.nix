@@ -29,12 +29,13 @@
             eval "$(starship init bash)"
           fi
         '';
-        PY_VERSION = "3.12.13";
+        PY_VERSION = pkgs.python312.version;
       in {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             libpcap
             libpcap.lib
+            python312
             uv
             ninja
             meson
@@ -49,15 +50,19 @@
             glibc
           ];
 
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.libpcap];
-          LIBCLANG_PATH = (pkgs.lib.makeLibraryPath [pkgs.libclang]) + "/libclang.so";
+          env = {
+            LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [pkgs.libpcap];
+            LIBCLANG_PATH = (pkgs.lib.makeLibraryPath [pkgs.libclang]) + "/libclang.so";
 
-          # for tools
-          LIBC_INCLUDE_DIR = pkgs.glibc.dev + "/include";
+            # for tools
+            LIBC_INCLUDE_DIR = pkgs.glibc.dev + "/include";
 
-          UV_NO_EDITABLE = 1;
-          UV_NO_CACHE = 1;
-          UV_PROJECT_ENVIRONMENT = ".venv";
+            UV_NO_EDITABLE = 1;
+            UV_NO_CACHE = 1;
+            UV_PROJECT_ENVIRONMENT = ".venv";
+            UV_PYTHON_DOWNLOADS = "never";
+            UV_PYTHON = "${pkgs.python312}/bin/python3.12";
+          };
 
           shellHook = ''
             version1=""
