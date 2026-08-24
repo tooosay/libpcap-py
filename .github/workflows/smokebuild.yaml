@@ -29,9 +29,7 @@ jobs:
         uses: ./.github/actions/setup-nix
 
       - name: Install Python
-        run: nix develop -c uv python install ${{ matrix.python-version }}
-        env:
-          UV_PYTHON_DOWNLOADS: manual
+        run: nix develop -c env UV_PYTHON_DOWNLOADS=manual uv python install ${{ matrix.python-version }}
 
       - name: Sync dependencies
         run: nix develop -c uv sync --frozen --dev
