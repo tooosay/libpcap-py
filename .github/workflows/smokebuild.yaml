@@ -32,29 +32,19 @@ jobs:
         run: nix develop -c env UV_PYTHON_DOWNLOADS=manual uv python install ${{ matrix.python-version }}
 
       - name: Sync dependencies
-        run: nix develop -c uv sync --frozen --dev
-        env:
-          UV_PYTHON: ${{ matrix.python-version }}
+        run: nix develop -c env UV_PYTHON=${{ matrix.python-version }} uv sync --frozen --dev
 
       - name: Check build environment
         run: |
-          nix develop -c uv run python --version
+          nix develop -c env UV_PYTHON=${{ matrix.python-version }} uv run python --version
           nix develop -c uv --version
           nix develop -c pkg-config --cflags --libs libpcap
-        env:
-          UV_PYTHON: ${{ matrix.python-version }}
 
       - name: Ruff check
-        run: nix develop -c uv run ruff check .
-        env:
-          UV_PYTHON: ${{ matrix.python-version }}
+        run: nix develop -c env UV_PYTHON=${{ matrix.python-version }} uv run ruff check .
 
       - name: Ruff format check
-        run: nix develop -c uv run ruff format --check .
-        env:
-          UV_PYTHON: ${{ matrix.python-version }}
+        run: nix develop -c env UV_PYTHON=${{ matrix.python-version }} uv run ruff format --check .
 
       - name: Smoke build wheel
-        run: nix develop -c uv build --wheel
-        env:
-          UV_PYTHON: ${{ matrix.python-version }}
+        run: nix develop -c env UV_PYTHON=${{ matrix.python-version }} uv build --wheel
