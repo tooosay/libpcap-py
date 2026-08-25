@@ -18,7 +18,7 @@ for version in "${versions[@]}"; do
 
   rm -rf build dist .venv
 
-  UV_PYTHON="${version}" nix develop -c uv build --wheel
+  nix develop -c env UV_PYTHON="${version}" uv build --wheel
 
   mkdir -p "artifacts/py${tag}"
   cp dist/*.whl "artifacts/py${tag}/"

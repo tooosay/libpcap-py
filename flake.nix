@@ -65,6 +65,11 @@
           };
 
           shellHook = ''
+            # python312 contributes its site-packages directory to PYTHONPATH.
+            # Leaving it set makes uv-managed Python 3.13+ load Python 3.12's
+            # _sysconfigdata and produce extension modules with a cp312 ABI.
+            unset PYTHONPATH
+
             version1=""
             finalVersion="${PY_VERSION}"
             if [ ! -f .python-version ]; then
